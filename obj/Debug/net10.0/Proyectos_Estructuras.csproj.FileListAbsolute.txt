@@ -17,12 +17,7 @@ C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estruc
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\rjsmcshtml.dswa.cache.json
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\scopedcss\bundle\Proyectos_Estructuras.styles.css
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\opzgrtwwot-{0}-yek6ywwggj-yek6ywwggj.gz
-C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\8af6x9lxwx-{0}-6rzny4qd5v-6rzny4qd5v.gz
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\2rjle6mc7v-{0}-4cdsvnew0c-4cdsvnew0c.gz
-C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\5r36yd1wh4-{0}-etl268wjbx-etl268wjbx.gz
-C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\mk0ljzhiwz-{0}-sjymy38lwm-sjymy38lwm.gz
-C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\dd8ndbv2ve-{0}-2bqsfasqa1-2bqsfasqa1.gz
-C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\xjsut38lob-{0}-tyu6thihrt-tyu6thihrt.gz
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\staticwebassets.build.json
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\staticwebassets.build.json.cache
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\staticwebassets.development.json
@@ -33,3 +28,11 @@ C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estruc
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\Proyectos_Estructuras.pdb
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\Proyectos_Estructuras.genruntimeconfig.cache
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\ref\Proyectos_Estructuras.dll
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\Proyectos_Estructuras.sourcelink.json
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\8af6x9lxwx-{0}-rn7zmakjwf-rn7zmakjwf.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\4apcrahwda-{0}-in2mcdxigg-in2mcdxigg.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\rpshlu8hj0-{0}-qeh0cev1kr-qeh0cev1kr.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\5r36yd1wh4-{0}-dukj6u9vge-dukj6u9vge.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\mk0ljzhiwz-{0}-wi5wlph40x-wi5wlph40x.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\dd8ndbv2ve-{0}-mbmu9inv7d-mbmu9inv7d.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\xjsut38lob-{0}-x1jktqkldj-x1jktqkldj.gz

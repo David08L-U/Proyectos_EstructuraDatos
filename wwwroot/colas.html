@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Colas – Estructuras de Datos</title>
+    <link rel="icon" href="img/logo.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="tema-colas">
@@ -35,11 +36,90 @@
 
         <section id="ej3" class="ejercicio">
             <h2>Ejercicio 3 · Estacionamiento para autos</h2>
-            <p class="pendiente">En construcción…</p>
+            <p class="descripcion">
+                Estacionamiento tipo <strong>callejón</strong>: los autos entran por una puerta y salen por la otra
+                en el mismo orden (FIFO). Se usa una <strong>Cola Circular Doblemente Ligada</strong> y se cobra
+                <strong>$2.00 por segundo</strong>.
+            </p>
+
+            <!-- Menú del ejercicio -->
+            <div class="submenu">
+                <button id="btnOpcEntrada" class="opcion activa" data-panel="pnlEntrada">1. Entrada de Auto</button>
+                <button id="btnOpcSalida" class="opcion" data-panel="pnlSalida">2. Salida de Autos</button>
+            </div>
+
+            <div class="est-grid">
+                <!-- Panel 1: Entrada -->
+                <div id="pnlEntrada" class="panel visible">
+                    <h3>Entrada de auto</h3>
+                    <form id="frmEntradaAuto" autocomplete="off" novalidate>
+                        <div class="campo">
+                            <label for="txtPlacas">Placas</label>
+                            <input id="txtPlacas" type="text" maxlength="10" placeholder="Ej. YUC-1234">
+                        </div>
+                        <div class="campo">
+                            <label for="txtPropietario">Propietario</label>
+                            <input id="txtPropietario" type="text" maxlength="60" placeholder="Ej. David Canché">
+                        </div>
+                        <div class="fila-botones">
+                            <button id="btnRegistrarEntrada" type="submit" class="btn">Registrar entrada</button>
+                            <button id="btnLimpiarEntrada" type="reset" class="btn btn-secundario">Limpiar</button>
+                        </div>
+                    </form>
+                    <p id="lblMensajeEntrada" class="mensaje"></p>
+                </div>
+
+                <!-- Panel 2: Salida -->
+                <div id="pnlSalida" class="panel">
+                    <h3>Salida de autos</h3>
+                    <p class="texto-suave">Sale el auto que está al <strong>frente</strong> de la cola.</p>
+                    <div class="fila-botones">
+                        <button id="btnRegistrarSalida" class="btn">Sacar auto del frente</button>
+                    </div>
+                    <p id="lblMensajeSalida" class="mensaje"></p>
+
+                    <!-- Ticket de cobro -->
+                    <div id="divTicket" class="ticket oculto">
+                        <h4>🧾 Ticket de salida</h4>
+                        <dl>
+                            <dt>Placas</dt>         <dd id="lblTicketPlacas"></dd>
+                            <dt>Propietario</dt>    <dd id="lblTicketPropietario"></dd>
+                            <dt>Hora de entrada</dt><dd id="lblTicketEntrada"></dd>
+                            <dt>Hora de salida</dt> <dd id="lblTicketSalida"></dd>
+                            <dt>Tiempo</dt>         <dd id="lblTicketTiempo"></dd>
+                        </dl>
+                        <p class="ticket-total">Total: <span id="lblTicketCosto"></span></p>
+                    </div>
+                </div>
+
+                <!-- Resumen siempre visible -->
+                <div class="panel resumen">
+                    <h3>Resumen</h3>
+                    <div class="indicadores">
+                        <div><span id="lblTotalAutos">0</span><small>autos dentro</small></div>
+                        <div><span id="lblFrente">—</span><small>frente</small></div>
+                        <div><span id="lblFinal">—</span><small>final</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Representación visual de la cola circular doble -->
+            <h3 class="sub">Cola circular doblemente ligada</h3>
+            <div id="divColaVisual" class="cola-visual"></div>
+
+            <!-- Tabla con los autos dentro -->
+            <h3 class="sub">Autos dentro del estacionamiento</h3>
+            <table id="tblAutos">
+                <thead>
+                    <tr><th>#</th><th>Placas</th><th>Propietario</th><th>Hora de entrada</th><th>Tiempo</th><th>Costo actual</th></tr>
+                </thead>
+                <tbody id="tbdAutos"></tbody>
+            </table>
         </section>
     </main>
 
     <script src="app.js"></script>
+    <script src="colas.js"></script>
     <script>activarPestanas();</script>
 </body>
 </html>
