@@ -27,7 +27,42 @@
     <main class="contenedor">
         <section id="ej1" class="ejercicio">
             <h2>Ejercicio 1 · Invertir palabra</h2>
-            <p class="pendiente">En construcción…</p>
+            <p class="descripcion">
+                Cada letra se mete a una <strong>pila</strong> (<em>Push</em>). Como la pila es
+                <strong>LIFO</strong> (la última en entrar es la primera en salir), al sacarlas (<em>Pop</em>)
+                la palabra queda invertida. Ejemplo: <strong>UTM → MTU</strong>.
+            </p>
+
+            <div class="est-grid">
+                <div class="panel visible">
+                    <h3>Captura</h3>
+                    <form id="frmInvertir" autocomplete="off" novalidate>
+                        <div class="campo">
+                            <label for="txtPalabraInvertir">Palabra</label>
+                            <input id="txtPalabraInvertir" type="text" maxlength="30" placeholder="Ej. UTM">
+                        </div>
+                        <div class="fila-botones">
+                            <button id="btnInvertir" type="submit" class="btn">Invertir</button>
+                            <button id="btnLimpiarInvertir" type="reset" class="btn btn-secundario">Limpiar</button>
+                        </div>
+                    </form>
+                    <p id="lblMensajeInvertir" class="mensaje"></p>
+
+                    <div id="divResultadoInvertir" class="resultado oculto">
+                        <div><small>Original</small><span id="lblOriginal"></span></div>
+                        <span class="flecha">→</span>
+                        <div><small>Invertida</small><span id="lblInvertida" class="destacado"></span></div>
+                    </div>
+                </div>
+
+                <!-- Dibujo de la pila -->
+                <div class="panel resumen">
+                    <h3>Pila <small id="lblPasoPila" class="texto-suave"></small></h3>
+                    <div id="divPilaVisual" class="pila-visual">
+                        <p class="texto-suave">Vacía</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <section id="ej2" class="ejercicio">
@@ -47,6 +82,7 @@
     </main>
 
     <script src="app.js"></script>
+    <script src="pilas.js"></script>
     <script>activarPestanas();</script>
 </body>
 </html>

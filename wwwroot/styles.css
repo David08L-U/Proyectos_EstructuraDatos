@@ -324,6 +324,138 @@ h3.sub { margin-top: 28px; }
     .est-grid { grid-template-columns: 1fr; }
 }
 
+/* ---------- Pila vertical ---------- */
+.pila-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-height: 200px;
+    justify-content: flex-end;
+    padding: 10px;
+    border: 3px solid var(--acento);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    background: #fff;
+}
+.celda-pila {
+    position: relative;
+    width: 100%;
+    max-width: 160px;
+    padding: 6px;
+    text-align: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+    background: color-mix(in srgb, var(--acento) 18%, white);
+    border: 2px solid var(--acento);
+    border-radius: 6px;
+}
+.celda-pila .tag { position: absolute; left: -54px; top: 50%; transform: translateY(-50%); }
+
+/* ---------- Resultado (original → resultado) ---------- */
+.resultado {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+}
+.resultado div { display: flex; flex-direction: column; }
+.resultado small { color: var(--texto-suave); font-size: .8rem; }
+.resultado span { font-size: 1.6rem; font-weight: 800; letter-spacing: 2px; word-break: break-all; }
+.resultado .destacado { color: var(--acento); }
+.resultado .flecha { font-size: 1.6rem; color: var(--texto-suave); }
+
+/* ---------- Lista de compra (Listas ej. 4) ---------- */
+.fila-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn-peligro { background: var(--error); }
+.total-grande {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--borde);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+.total-grande span { display: block; font-size: 1.8rem; font-weight: 800; color: var(--acento); }
+.encabezado-tabla {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 28px;
+}
+.encabezado-tabla h3.sub { margin: 0 0 16px; }
+.tabla-clic tbody tr[data-clave] { cursor: pointer; }
+.tabla-clic tbody tr[data-clave]:hover { background: var(--fondo); }
+.clave {
+    display: inline-block;
+    min-width: 28px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--acento);
+    color: #fff;
+    font-weight: 800;
+    text-align: center;
+}
+.fila-total td { font-weight: 800; border-top: 2px solid var(--texto); }
+.fila-total td:last-child { color: var(--acento); font-size: 1.1rem; }
+
+/* ---------- Palabras por letra (Listas ej. 5) ---------- */
+textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+}
+textarea:focus { outline: 2px solid var(--acento); border-color: transparent; }
+
+.listas-palabras {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+}
+.lista-card {
+    background: #fff;
+    border: 1px solid var(--borde);
+    border-top: 4px solid var(--acento);
+    border-radius: 10px;
+    padding: 14px;
+}
+.lista-general { grid-column: 1 / -1; border-top-color: var(--oscuro); background: #fafbfc; }
+.lista-nueva { box-shadow: 0 0 0 2px var(--ok); }
+.lista-card-titulo { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.lista-card-titulo div { display: flex; flex-direction: column; flex: 1; }
+.lista-card-titulo small { color: var(--texto-suave); font-size: .8rem; }
+.letra-grande {
+    width: 40px; height: 40px;
+    border-radius: 8px;
+    background: var(--acento);
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+.lista-general .letra-grande { background: var(--oscuro); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    font-weight: 600;
+    font-size: .9rem;
+}
+.chip-nueva { background: #dcfce7; border-color: var(--ok); }
+
 /* ---------- Pie ---------- */
 .pie {
     text-align: center;

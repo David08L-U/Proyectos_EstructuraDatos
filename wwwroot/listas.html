@@ -44,16 +44,116 @@
 
         <section id="ej4" class="ejercicio">
             <h2>Ejercicio 4 · Eliminar y ordenar productos</h2>
-            <p class="pendiente">En construcción…</p>
+            <p class="descripcion">
+                Los productos se guardan en una <strong>lista ligada</strong>. Cada uno recibe una
+                <strong>clave</strong> que sirve para eliminarlo. La lista se muestra
+                <strong>ordenada por nombre</strong> junto con el <strong>costo total de la compra</strong>.
+            </p>
+
+            <div class="est-grid">
+                <div>
+                    <!-- Agregar -->
+                    <div class="panel visible">
+                        <h3>Agregar producto</h3>
+                        <form id="frmAgregarProducto" autocomplete="off" novalidate>
+                            <div class="campo">
+                                <label for="txtNombreProducto">Nombre</label>
+                                <input id="txtNombreProducto" type="text" maxlength="40" placeholder="Ej. Leche">
+                            </div>
+                            <div class="fila-campos">
+                                <div class="campo">
+                                    <label for="txtPrecioProducto">Precio ($)</label>
+                                    <input id="txtPrecioProducto" type="text" inputmode="decimal" placeholder="Ej. 25.50">
+                                </div>
+                                <div class="campo">
+                                    <label for="txtCantidadProducto">Cantidad</label>
+                                    <input id="txtCantidadProducto" type="text" inputmode="numeric" placeholder="Ej. 2">
+                                </div>
+                            </div>
+                            <div class="fila-botones">
+                                <button id="btnAgregarProducto" type="submit" class="btn">Agregar</button>
+                                <button id="btnLimpiarProducto" type="reset" class="btn btn-secundario">Limpiar</button>
+                            </div>
+                        </form>
+                        <p id="lblMensajeAgregar" class="mensaje"></p>
+                    </div>
+
+                    <!-- Eliminar -->
+                    <div class="panel visible" style="margin-top:16px">
+                        <h3>Eliminar producto por clave</h3>
+                        <form id="frmEliminarProducto" autocomplete="off" novalidate>
+                            <div class="campo">
+                                <label for="txtClaveEliminar">Clave del producto</label>
+                                <input id="txtClaveEliminar" type="text" inputmode="numeric" placeholder="Ej. 3  (o da clic en una fila de la tabla)">
+                            </div>
+                            <div class="fila-botones">
+                                <button id="btnEliminarProducto" type="submit" class="btn btn-peligro">Eliminar</button>
+                                <button id="btnVaciarLista" type="button" class="btn btn-secundario">Vaciar lista</button>
+                            </div>
+                        </form>
+                        <p id="lblMensajeEliminar" class="mensaje"></p>
+                    </div>
+                </div>
+
+                <!-- Totales -->
+                <div class="panel resumen">
+                    <h3>Total de la compra</h3>
+                    <div class="indicadores">
+                        <div><span id="lblTotalProductos">0</span><small>productos</small></div>
+                        <div><span id="lblTotalArticulos">0</span><small>artículos</small></div>
+                    </div>
+                    <p class="total-grande">Total: <span id="lblTotalCompra">$0.00</span></p>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="encabezado-tabla">
+                <h3 class="sub">Productos en la lista</h3>
+                <div class="submenu">
+                    <button id="btnOrdenNombre" class="opcion activa" data-orden="nombre">Ordenado por nombre (A-Z)</button>
+                    <button id="btnOrdenCaptura" class="opcion" data-orden="captura">Orden de captura</button>
+                </div>
+            </div>
+            <table id="tblProductos" class="tabla-clic">
+                <thead>
+                    <tr><th>Clave</th><th>Nombre</th><th>Precio</th><th>Cantidad</th><th>Subtotal</th></tr>
+                </thead>
+                <tbody id="tbdProductos"></tbody>
+            </table>
         </section>
 
         <section id="ej5" class="ejercicio">
             <h2>Ejercicio 5 · Listar palabras por letra</h2>
-            <p class="pendiente">En construcción…</p>
+            <p class="descripcion">
+                Escribe una o varias palabras (separadas por espacio o coma). Todas se guardan en la
+                <strong>Lista 1</strong> y además se clasifican en una lista por cada <strong>letra inicial</strong>.
+                Si llega una palabra con una letra nueva, se <strong>crea una lista nueva</strong> automáticamente.
+            </p>
+
+            <div class="panel visible">
+                <h3>Captura de palabras</h3>
+                <form id="frmPalabras" autocomplete="off" novalidate>
+                    <div class="campo">
+                        <label for="txtPalabras">Palabras</label>
+                        <textarea id="txtPalabras" rows="2" maxlength="600"
+                            placeholder="Ej. Fresa, Fresca, Orilla, Oso, Peso, Pez"></textarea>
+                    </div>
+                    <div class="fila-botones">
+                        <button id="btnAgregarPalabras" type="submit" class="btn">Agregar palabras</button>
+                        <button id="btnEjemploPalabras" type="button" class="btn btn-secundario">Cargar ejemplo del PDF</button>
+                        <button id="btnVaciarPalabras" type="button" class="btn btn-secundario">Vaciar listas</button>
+                    </div>
+                </form>
+                <p id="lblMensajePalabras" class="mensaje"></p>
+            </div>
+
+            <h3 class="sub">Listas <small id="lblTotalListas" class="texto-suave"></small></h3>
+            <div id="divListasPalabras" class="listas-palabras"></div>
         </section>
     </main>
 
     <script src="app.js"></script>
+    <script src="listas.js"></script>
     <script>activarPestanas();</script>
 </body>
 </html>

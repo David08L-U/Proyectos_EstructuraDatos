@@ -32,7 +32,8 @@ C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estruc
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\8af6x9lxwx-{0}-rn7zmakjwf-rn7zmakjwf.gz
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\4apcrahwda-{0}-in2mcdxigg-in2mcdxigg.gz
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\rpshlu8hj0-{0}-qeh0cev1kr-qeh0cev1kr.gz
-C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\5r36yd1wh4-{0}-dukj6u9vge-dukj6u9vge.gz
 C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\mk0ljzhiwz-{0}-wi5wlph40x-wi5wlph40x.gz
-C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\dd8ndbv2ve-{0}-mbmu9inv7d-mbmu9inv7d.gz
-C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\xjsut38lob-{0}-x1jktqkldj-x1jktqkldj.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\5r36yd1wh4-{0}-jcyzmoi8yj-jcyzmoi8yj.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\dd8ndbv2ve-{0}-zjqs7iznx8-zjqs7iznx8.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\mj0v439t4x-{0}-g4m18u44h7-g4m18u44h7.gz
+C:\Hom\CUATRI_4\ESTRUCTURA_D_DATOS\Unidad_2\Ejercicos_Generales\Proyectos_Estructuras\obj\Debug\net10.0\compressed\xjsut38lob-{0}-ybonuzgmra-ybonuzgmra.gz

@@ -28,6 +28,31 @@ namespace Proyectos_Estructuras.Models
             cantidad++;
         }
 
+        // Inserta el elemento en su posición para que la lista quede ordenada.
+        // "comparar" regresa < 0 si a va antes que b.
+        public void InsertarOrdenado(T dato, Comparison<T> comparar)
+        {
+            Nodo<T> nuevo = new Nodo<T>(dato);
+
+            // Va al inicio si la lista está vacía o si es menor que el primero
+            if (inicio == null || comparar(dato, inicio.Dato) < 0)
+            {
+                nuevo.Siguiente = inicio;
+                inicio = nuevo;
+            }
+            else
+            {
+                // Avanza hasta encontrar dónde va
+                Nodo<T> actual = inicio;
+                while (actual.Siguiente != null && comparar(actual.Siguiente.Dato, dato) <= 0)
+                    actual = actual.Siguiente;
+
+                nuevo.Siguiente = actual.Siguiente;
+                actual.Siguiente = nuevo;
+            }
+            cantidad++;
+        }
+
         // Elimina el primer elemento que cumpla la condición.
         // Regresa el elemento eliminado, o default si no lo encontró.
         public T? Eliminar(Func<T, bool> condicion)
