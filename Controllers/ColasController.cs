@@ -29,7 +29,254 @@ namespace Proyectos_Estructuras.Controllers
         }
 
         // TODO Ejercicio 1: Ventanilla de un banco
-        // TODO Ejercicio 2: Juego pintar coches
+        // =====================================================================
+        //  EJERCICIO 2: JUEGO PINTAR COCHES (Víctor)
+        //  - Cola de atención donde se atienden y pintan coches (máximo 5).
+        //  - Solo se puede pintar el primer carro respetando la cola (FIFO).
+        //  - Cada determinado tiempo se enfila un carro (inicia en 20s).
+        //  - La velocidad de enfilamiento aumenta conforme el usuario pinta 3 carros.
+        //  - Los colores requeridos se generan aleatoriamente de la paleta.
+        //  - El juego termina cuando hay 5 carros enfilados.
+        //  - Muestra el récord obtenido (carros pintados y tiempo total).
+        // =====================================================================
+
+        private static readonly (string Nombre, string Hex)[] COLORES_PALETA = new[]
+        {
+            ("Amarillo", "#EAB308"),
+            ("Crema", "#FEF08A"),
+            ("Verde oliva", "#65A30D"),
+            ("Naranja", "#F97316"),
+            ("Azul oscuro", "#1E3A8A"),
+            ("Verde", "#16A34A"),
+            ("Rojo", "#DC2626"),
+            ("Guinda", "#881337"),
+            ("Café", "#78350F")
+        };
+
+        private static readonly Cola<CarroJuego> colaCarrosJuego = new Cola<CarroJuego>(5);
+        private static readonly Lista<RecordJuego> recordsJuego = new Lista<RecordJuego>();
+        private static int siguienteIdCarro = 1;
+        private static int carrosPintadosPartida = 0;
+        private static DateTime? inicioPartida = null;
+        private static bool juegoTerminado = false;
+        private static readonly object candadoJuego = new object();
+
+        public class PintarColorDto
+        {
+            public string? Color { get; set; }
+        }
+
+        public class GuardarRecordDto
+        {
+            public string? Jugador { get; set; }
+        }
+
+        private static int CalcularIntervaloLlegadaSegundos(int pintados)
+        {
+            // Inicia en 20s, y por cada 3 carros pintados se acelera 2s (mínimo 5s)
+            int reduccion = (pintados / 3) * 2;
+            int intervalo = 20 - reduccion;
+            return Math.Max(5, intervalo);
+        }
+
+        private static object EstadoJuego()
+        {
+            int tiempoSegundos = inicioPartida.HasValue
+                ? (int)Math.Max(0, (DateTime.Now - inicioPartida.Value).TotalSeconds)
+                : 0;
+
+            return new
+            {
+                carros = colaCarrosJuego.ObtenerTodos(),
+                total = colaCarrosJuego.Contar(),
+                capacidad = colaCarrosJuego.Capacidad,
+                estaLlena = colaCarrosJuego.ColaLlena(),
+                estaVacia = colaCarrosJuego.ColaVacia(),
+                frente = colaCarrosJuego.VerFrente(),
+                final = colaCarrosJuego.VerFinal(),
+                carrosPintados = carrosPintadosPartida,
+                juegoTerminado,
+                tiempoTotalSegundos = tiempoSegundos,
+                intervaloLlegada = CalcularIntervaloLlegadaSegundos(carrosPintadosPartida),
+                paleta = COLORES_PALETA.Select(c => new { nombre = c.Nombre, hex = c.Hex }),
+                records = recordsJuego.ObtenerTodos()
+                                      .OrderByDescending(r => r.CarrosPintados)
+                                      .ThenBy(r => r.TiempoTotalSegundos)
+                                      .Take(5)
+            };
+        }
+
+        // GET /api/colas/juego/estado  → estado actual del juego
+        [HttpGet("juego/estado")]
+        public IActionResult VerEstadoJuego()
+        {
+            lock (candadoJuego)
+                return Ok(EstadoJuego());
+        }
+
+        // POST /api/colas/juego/iniciar  → comienza una nueva partida
+        [HttpPost("juego/iniciar")]
+        public IActionResult IniciarJuego()
+        {
+            lock (candadoJuego)
+            {
+                // Vaciar la cola existente usando la operación EliminaCola
+                while (!colaCarrosJuego.ColaVacia())
+                    colaCarrosJuego.EliminaCola();
+
+                siguienteIdCarro = 1;
+                carrosPintadosPartida = 0;
+                inicioPartida = DateTime.Now;
+                juegoTerminado = false;
+
+                // Insertar el primer carro en la cola
+                var colorInicial = COLORES_PALETA[Random.Shared.Next(COLORES_PALETA.Length)];
+                CarroJuego primerCarro = new CarroJuego(siguienteIdCarro++, colorInicial.Nombre, colorInicial.Hex);
+                colaCarrosJuego.InsertaCola(primerCarro);
+
+                return Ok(new
+                {
+                    mensaje = "¡Partida iniciada! Pinta el carro del frente con el color correcto.",
+                    estado = EstadoJuego()
+                });
+            }
+        }
+
+        // POST /api/colas/juego/enfilaSiguiente  → enfila un nuevo carro automáticamente
+        [HttpPost("juego/enfilaSiguiente")]
+        public IActionResult EnfilaSiguienteCarro()
+        {
+            lock (candadoJuego)
+            {
+                if (juegoTerminado)
+                    return BadRequest(new { mensaje = "El juego ya ha terminado.", estado = EstadoJuego(), finDelJuego = true });
+
+                if (colaCarrosJuego.ColaLlena())
+                {
+                    juegoTerminado = true;
+                    return Ok(new
+                    {
+                        mensaje = "¡Fin del juego! La cola llegó a su límite de 5 carros sin atender.",
+                        finDelJuego = true,
+                        estado = EstadoJuego()
+                    });
+                }
+
+                var colorAleatorio = COLORES_PALETA[Random.Shared.Next(COLORES_PALETA.Length)];
+                CarroJuego nuevoCarro = new CarroJuego(siguienteIdCarro++, colorAleatorio.Nombre, colorAleatorio.Hex);
+
+                try
+                {
+                    colaCarrosJuego.InsertaCola(nuevoCarro);
+                }
+                catch (InvalidOperationException)
+                {
+                    juegoTerminado = true;
+                }
+
+                // Si al insertar llegó a 5 carros, se termina el juego según regla #4
+                if (colaCarrosJuego.ColaLlena())
+                    juegoTerminado = true;
+
+                return Ok(new
+                {
+                    mensaje = juegoTerminado
+                        ? "¡Fin del juego! La cola de atención llegó a 5 carros."
+                        : $"Nuevo carro enfilado (#{nuevoCarro.Id} - {nuevoCarro.ColorObjetivo}).",
+                    finDelJuego = juegoTerminado,
+                    estado = EstadoJuego()
+                });
+            }
+        }
+
+        // POST /api/colas/juego/pintar  → atiende el primer carro con el color seleccionado
+        [HttpPost("juego/pintar")]
+        public IActionResult PintarPrimerCarro([FromBody] PintarColorDto datos)
+        {
+            string colorElegido = (datos.Color ?? "").Trim();
+            if (string.IsNullOrWhiteSpace(colorElegido))
+                return BadRequest(new { mensaje = "Selecciona un color de la paleta." });
+
+            lock (candadoJuego)
+            {
+                if (juegoTerminado)
+                    return BadRequest(new { mensaje = "La partida ha terminado. Inicia un nuevo juego." });
+
+                if (colaCarrosJuego.ColaVacia())
+                    return BadRequest(new { mensaje = "No hay ningún carro en la cola de atención." });
+
+                // Regla #2: Sólo se puede pintar el primer carro respetando la cola (VerFrente)
+                CarroJuego frente = colaCarrosJuego.VerFrente()!;
+
+                if (!string.Equals(frente.ColorObjetivo, colorElegido, StringComparison.OrdinalIgnoreCase))
+                {
+                    return BadRequest(new
+                    {
+                        mensaje = $"¡Color incorrecto! El carro #{frente.Id} pide '{frente.ColorObjetivo}', pero elegiste '{colorElegido}'.",
+                        acierto = false,
+                        estado = EstadoJuego()
+                    });
+                }
+
+                // Color correcto: se retira de la cola con EliminaCola (FIFO)
+                CarroJuego atendido = colaCarrosJuego.EliminaCola();
+                atendido.Pintado = true;
+                atendido.ColorPintado = colorElegido;
+                carrosPintadosPartida++;
+
+                string avisoVelocidad = "";
+                if (carrosPintadosPartida % 3 == 0)
+                {
+                    int nuevoIntervalo = CalcularIntervaloLlegadaSegundos(carrosPintadosPartida);
+                    avisoVelocidad = $" ¡La velocidad aumentó! Ahora los carros llegan cada {nuevoIntervalo}s.";
+                }
+
+                return Ok(new
+                {
+                    mensaje = $"¡Carro #{atendido.Id} pintado con éxito de {colorElegido}!{avisoVelocidad}",
+                    acierto = true,
+                    atendido,
+                    estado = EstadoJuego()
+                });
+            }
+        }
+
+        // POST /api/colas/juego/guardarRecord  → guarda el récord obtenido
+        [HttpPost("juego/guardarRecord")]
+        public IActionResult GuardarRecord([FromBody] GuardarRecordDto datos)
+        {
+            string jugador = (datos.Jugador ?? "Víctor").Trim();
+            if (string.IsNullOrWhiteSpace(jugador))
+                jugador = "Jugador";
+
+            lock (candadoJuego)
+            {
+                int tiempo = inicioPartida.HasValue
+                    ? (int)Math.Max(1, (DateTime.Now - inicioPartida.Value).TotalSeconds)
+                    : 0;
+
+                RecordJuego rec = new RecordJuego
+                {
+                    Jugador = jugador.Length > 30 ? jugador.Substring(0, 30) : jugador,
+                    CarrosPintados = carrosPintadosPartida,
+                    TiempoTotalSegundos = tiempo,
+                    Fecha = DateTime.Now
+                };
+
+                recordsJuego.Agregar(rec);
+
+                return Ok(new
+                {
+                    mensaje = $"Récord guardado: {rec.CarrosPintados} carros en {rec.TiempoTotalSegundos} segundos.",
+                    record = rec,
+                    records = recordsJuego.ObtenerTodos()
+                                          .OrderByDescending(r => r.CarrosPintados)
+                                          .ThenBy(r => r.TiempoTotalSegundos)
+                                          .Take(5)
+                });
+            }
+        }
+
 
         // =====================================================================
         //  EJERCICIO 3: ESTACIONAMIENTO PARA AUTOS

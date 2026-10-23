@@ -27,19 +27,250 @@
     </nav>
 
     <main class="contenedor">
+        <!-- =========================================================
+             EJERCICIO 1 · PRODUCTOS DISPONIBLES Y RETIRADOS (Víctor)
+             ========================================================= -->
         <section id="ej1" class="ejercicio">
             <h2>Ejercicio 1 · Productos disponibles y retirados</h2>
-            <p class="pendiente">En construcción…</p>
+            <p class="descripcion">
+                Los productos pasados por el escáner se almacenan en una <strong>lista ligada</strong> con nombre correlativo
+                (<code>producto1</code>, <code>producto2</code>, etc.), cantidad y precio generados aleatoriamente.
+                Permite <strong>retirar productos</strong> del almacén y consultar el total de productos <strong>disponibles y retirados</strong>.
+            </p>
+
+            <div class="est-grid">
+                <div>
+                    <!-- Panel Escáner -->
+                    <div class="panel visible">
+                        <h3>Escáner de supermercado</h3>
+                        <p class="texto-suave">Simula el paso de productos por el escáner de la caja.</p>
+                        <div class="fila-botones" style="margin-top:12px;">
+                            <button id="btnEscanearUno" type="button" class="btn">🛒 Escanear 1 producto</button>
+                            <button id="btnEscanearVarios" type="button" class="btn btn-secundario">📦 Escanear lote (+5)</button>
+                            <button id="btnVaciarSuper" type="button" class="btn btn-secundario">Reiniciar almacén</button>
+                        </div>
+                        <p id="lblMensajeSuper" class="mensaje"></p>
+                    </div>
+
+                    <!-- Panel Retirar -->
+                    <div class="panel visible" style="margin-top:16px;">
+                        <h3>Retirar producto del almacén</h3>
+                        <form id="frmRetirarSuper" autocomplete="off" novalidate>
+                            <div class="campo">
+                                <label for="txtClaveRetirarSuper">Clave o número del producto a retirar</label>
+                                <input id="txtClaveRetirarSuper" type="text" inputmode="numeric" placeholder="Ej. 1 (o da clic en Retirar en la tabla)">
+                            </div>
+                            <div class="fila-botones">
+                                <button id="btnRetirarSuper" type="submit" class="btn btn-peligro">Retirar del almacén</button>
+                            </div>
+                        </form>
+                        <p id="lblMensajeRetirarSuper" class="mensaje"></p>
+                    </div>
+                </div>
+
+                <!-- Resumen de Almacén -->
+                <div class="panel resumen">
+                    <h3>Estado del almacén</h3>
+                    <div class="indicadores">
+                        <div><span id="lblTotalDisponibles">0</span><small>disponibles</small></div>
+                        <div><span id="lblTotalRetirados">0</span><small>retirados</small></div>
+                    </div>
+                    <div style="margin-top:16px; font-size:.9rem; color:var(--texto-suave);">
+                        <p>Estructura: <strong>Lista simplemente ligada</strong></p>
+                        <p>Total procesados: <strong id="lblTotalProcesadosSuper">0</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tablas de Disponibles y Retirados -->
+            <div class="encabezado-tabla" style="margin-top:24px;">
+                <h3 class="sub">Productos en almacén (Disponibles)</h3>
+            </div>
+            <table id="tblSuperDisponibles">
+                <thead>
+                    <tr><th>Clave</th><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Valor</th><th>Acción</th></tr>
+                </thead>
+                <tbody id="tbdSuperDisponibles"></tbody>
+            </table>
+
+            <div class="encabezado-tabla" style="margin-top:24px;">
+                <h3 class="sub">Productos retirados del almacén</h3>
+            </div>
+            <table id="tblSuperRetirados">
+                <thead>
+                    <tr><th>Clave</th><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Valor</th><th>Estado</th></tr>
+                </thead>
+                <tbody id="tbdSuperRetirados"></tbody>
+            </table>
         </section>
 
+        <!-- =========================================================
+             EJERCICIO 2 · PARES E IMPARES (Víctor)
+             ========================================================= -->
         <section id="ej2" class="ejercicio">
             <h2>Ejercicio 2 · Pares e impares</h2>
-            <p class="pendiente">En construcción…</p>
+            <p class="descripcion">
+                Genera una <strong>lista ligada de números aleatorios</strong> y luego clasifica y muestra
+                todos los números <strong>pares</strong> en una lista y todos los números <strong>impares</strong> en otra lista.
+            </p>
+
+            <div class="est-grid">
+                <div>
+                    <div class="panel visible">
+                        <h3>Generador de números aleatorios</h3>
+                        <form id="frmGenerarParesImpares" autocomplete="off" novalidate>
+                            <div class="fila-campos">
+                                <div class="campo">
+                                    <label for="txtCantidadAleatorios">Cantidad a generar</label>
+                                    <input id="txtCantidadAleatorios" type="text" inputmode="numeric" value="15" placeholder="Ej. 15">
+                                </div>
+                                <div class="campo">
+                                    <label for="txtMinAleatorios">Mínimo</label>
+                                    <input id="txtMinAleatorios" type="text" inputmode="numeric" value="1" placeholder="Ej. 1">
+                                </div>
+                                <div class="campo">
+                                    <label for="txtMaxAleatorios">Máximo</label>
+                                    <input id="txtMaxAleatorios" type="text" inputmode="numeric" value="100" placeholder="Ej. 100">
+                                </div>
+                            </div>
+                            <div class="fila-botones">
+                                <button id="btnGenerarAleatorios" type="submit" class="btn">🎲 Generar y clasificar</button>
+                                <button id="btnVaciarParesImpares" type="button" class="btn btn-secundario">Vaciar listas</button>
+                            </div>
+                        </form>
+
+                        <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--borde);">
+                            <h4>O agregar un número manual</h4>
+                            <form id="frmNumeroManual" class="fila-campos" style="margin-top:8px;" autocomplete="off" novalidate>
+                                <div class="campo" style="flex:1;">
+                                    <input id="txtNumeroManual" type="text" inputmode="numeric" placeholder="Ej. 42">
+                                </div>
+                                <button id="btnAgregarManual" type="submit" class="btn btn-secundario" style="margin-top:4px;">➕ Agregar</button>
+                            </form>
+                        </div>
+
+                        <p id="lblMensajeParesImpares" class="mensaje"></p>
+                    </div>
+                </div>
+
+                <div class="panel resumen">
+                    <h3>Conteo de elementos</h3>
+                    <div class="indicadores">
+                        <div><span id="lblTotalNumeros">0</span><small>total generados</small></div>
+                        <div><span id="lblTotalPares" style="color:#16a34a;">0</span><small>pares</small></div>
+                        <div><span id="lblTotalImpares" style="color:#2563eb;">0</span><small>impares</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Listas visuales -->
+            <div style="margin-top:24px;">
+                <h3 class="sub">1. Lista original de números generados</h3>
+                <div id="divListaTodosNumeros" class="chips-contenedor">
+                    <p class="texto-suave">Aún no se han generado números.</p>
+                </div>
+
+                <div class="fila-listas-grid" style="margin-top:20px; display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+                    <div class="lista-card">
+                        <div class="lista-card-titulo">
+                            <span class="letra-grande" style="color:#16a34a;">2</span>
+                            <div>
+                                <strong>Lista de Números Pares</strong>
+                                <small id="lblDetallePares">0 números (divisibles entre 2)</small>
+                            </div>
+                        </div>
+                        <div id="divListaPares" class="chips">
+                            <p class="texto-suave">Sin elementos pares.</p>
+                        </div>
+                    </div>
+
+                    <div class="lista-card">
+                        <div class="lista-card-titulo">
+                            <span class="letra-grande" style="color:#2563eb;">3</span>
+                            <div>
+                                <strong>Lista de Números Impares</strong>
+                                <small id="lblDetalleImpares">0 números</small>
+                            </div>
+                        </div>
+                        <div id="divListaImpares" class="chips">
+                            <p class="texto-suave">Sin elementos impares.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
+        <!-- =========================================================
+             EJERCICIO 3 · APROBADOS Y REPROBADOS (Víctor)
+             ========================================================= -->
         <section id="ej3" class="ejercicio">
             <h2>Ejercicio 3 · Aprobados y reprobados</h2>
-            <p class="pendiente">En construcción…</p>
+            <p class="descripcion">
+                Solicita nombres de alumnos y sus calificaciones y los almacena en una <strong>lista ligada</strong>.
+                La aplicación saca a los alumnos reprobados con una <strong>calificación menor a siete (&lt; 7.00)</strong>
+                y los almacena en una <strong>lista de reprobados</strong>, mostrando tanto la lista de <strong>aprobados</strong>
+                como la de <strong>reprobados</strong>.
+            </p>
+
+            <div class="est-grid">
+                <div>
+                    <div class="panel visible">
+                        <h3>Capturar alumno</h3>
+                        <form id="frmCapturarAlumno" autocomplete="off" novalidate>
+                            <div class="campo">
+                                <label for="txtNombreAlumno">Nombre del alumno</label>
+                                <input id="txtNombreAlumno" type="text" maxlength="50" placeholder="Ej. Víctor Méndez">
+                            </div>
+                            <div class="campo">
+                                <label for="txtCalificacionAlumno">Calificación (0 - 10)</label>
+                                <input id="txtCalificacionAlumno" type="text" inputmode="decimal" placeholder="Ej. 8.5 ó 6.4">
+                            </div>
+                            <div class="fila-botones">
+                                <button id="btnGuardarAlumno" type="submit" class="btn">Guardar y clasificar</button>
+                                <button id="btnDemoAlumnos" type="button" class="btn btn-secundario">Cargar ejemplos</button>
+                                <button id="btnVaciarAlumnos" type="button" class="btn btn-secundario">Vaciar listas</button>
+                            </div>
+                        </form>
+                        <p id="lblMensajeAlumnos" class="mensaje"></p>
+                    </div>
+                </div>
+
+                <div class="panel resumen">
+                    <h3>Estadísticas académicas</h3>
+                    <div class="indicadores">
+                        <div><span id="lblTotalAprobados" style="color:#16a34a;">0</span><small>aprobados (≥ 7.0)</small></div>
+                        <div><span id="lblTotalReprobados" style="color:#dc2626;">0</span><small>reprobados (&lt; 7.0)</small></div>
+                        <div><span id="lblPromedioAlumnos">0.0</span><small>promedio gral.</small></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tablas de Aprobados y Reprobados -->
+            <div class="fila-listas-grid" style="margin-top:24px; display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px;">
+                <div>
+                    <div class="encabezado-tabla">
+                        <h3 class="sub" style="color:#16a34a;">✔ Lista de Alumnos Aprobados (≥ 7.0)</h3>
+                    </div>
+                    <table id="tblAlumnosAprobados">
+                        <thead>
+                            <tr><th>#</th><th>Alumno</th><th>Calificación</th><th>Estado</th><th>Acción</th></tr>
+                        </thead>
+                        <tbody id="tbdAlumnosAprobados"></tbody>
+                    </table>
+                </div>
+
+                <div>
+                    <div class="encabezado-tabla">
+                        <h3 class="sub" style="color:#dc2626;">✖ Lista de Alumnos Reprobados (&lt; 7.0)</h3>
+                    </div>
+                    <table id="tblAlumnosReprobados">
+                        <thead>
+                            <tr><th>#</th><th>Alumno</th><th>Calificación</th><th>Estado</th><th>Acción</th></tr>
+                        </thead>
+                        <tbody id="tbdAlumnosReprobados"></tbody>
+                    </table>
+                </div>
+            </div>
         </section>
 
         <section id="ej4" class="ejercicio">

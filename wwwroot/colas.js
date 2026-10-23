@@ -3,6 +3,262 @@
 // ============================================================
 
 // =====================================================================
+//  EJERCICIO 2: JUEGO PINTAR COCHES (Víctor)
+// =====================================================================
+
+const PALETA_COLORES = [
+    { nombre: "Amarillo", hex: "#EAB308", texto: "#000" },
+    { nombre: "Crema", hex: "#FEF08A", texto: "#000" },
+    { nombre: "Verde oliva", hex: "#65A30D", texto: "#fff" },
+    { nombre: "Naranja", hex: "#F97316", texto: "#fff" },
+    { nombre: "Azul oscuro", hex: "#1E3A8A", texto: "#fff" },
+    { nombre: "Verde", hex: "#16A34A", texto: "#fff" },
+    { nombre: "Rojo", hex: "#DC2626", texto: "#fff" },
+    { nombre: "Guinda", hex: "#881337", texto: "#fff" },
+    { nombre: "Café", hex: "#78350F", texto: "#fff" }
+];
+
+let estadoJuego = null;
+let timerJuego = null;
+let timerCronometro = null;
+let segundosProximo = 20;
+let tiempoSegundos = 0;
+let ultimoAtendido = null;
+
+function renderPaleta() {
+    const div = document.getElementById("divPaletaColores");
+    if (!div) return;
+    div.innerHTML = PALETA_COLORES.map(c => `
+        <button type="button" class="btn-color-paleta" data-color="${c.nombre}"
+            style="background:${c.hex}; color:${c.texto};">
+            <span class="muestra-color" style="background:${c.hex}; border:2px solid ${c.texto === '#000' ? '#cbd5e1' : '#fff'};"></span>
+            <strong>${c.nombre}</strong>
+        </button>`).join("");
+
+    div.querySelectorAll(".btn-color-paleta").forEach(btn => {
+        btn.addEventListener("click", () => {
+            pintarCarroFrente(btn.dataset.color);
+        });
+    });
+}
+
+function pintarTablero(estado) {
+    estadoJuego = estado;
+
+    document.getElementById("lblJuegoPintados").textContent = estado.carrosPintados;
+    document.getElementById("lblJuegoColaCount").textContent = `${estado.total} / ${estado.capacidad}`;
+    document.getElementById("lblJuegoVelocidad").textContent = `Cada ${estado.intervaloLlegada}s`;
+
+    const lblColaEstado = document.getElementById("lblJuegoColaEstado");
+    if (estado.total >= 4) {
+        lblColaEstado.textContent = "¡PELIGRO DE SATURACIÓN!";
+        lblColaEstado.style.color = "#dc2626";
+    } else {
+        lblColaEstado.textContent = "cola de atención";
+        lblColaEstado.style.color = "";
+    }
+
+    // Dibujar la cola de coches
+    const divCola = document.getElementById("divColaCochesVisual");
+    if (estado.carros.length === 0) {
+        divCola.innerHTML = `<div class="pista-vacia">La cola está vacía. Enfilando el próximo carro...</div>`;
+    } else {
+        divCola.innerHTML = estado.carros.map((carro, idx) => {
+            const esFrente = idx === 0;
+            const esFinal = idx === estado.carros.length - 1;
+            return `
+                <div class="coche-tarjeta ${esFrente ? 'coche-frente' : ''}">
+                    <div class="coche-header">
+                        ${esFrente ? '<span class="tag tag-frente">👉 FRENTE (Atendiendo)</span>' : `<span class="tag">#${idx + 1}</span>`}
+                        ${esFinal && !esFrente ? '<span class="tag tag-final">FINAL</span>' : ''}
+                    </div>
+                    <div class="coche-grafico">
+                        <img src="img/auto.svg" alt="Carro #${carro.id}" class="coche-svg">
+                    </div>
+                    <div class="etiqueta-color-pedida" style="border-left: 6px solid ${carro.colorHex};">
+                        <small>Color pedido:</small>
+                        <strong>${carro.colorObjetivo}</strong>
+                    </div>
+                </div>`;
+        }).join("");
+    }
+
+    // Actualizar coche atendido
+    const slotAtendido = document.getElementById("cocheAtendidoVisual");
+    if (ultimoAtendido) {
+        slotAtendido.className = "coche-tarjeta atendido-exito";
+        slotAtendido.innerHTML = `
+            <img src="img/auto.svg" alt="Carro atendido" class="coche-svg anim-pintado">
+            <span class="etiqueta-color" style="background:${ultimoAtendido.colorHex}; color:#fff; font-weight:700;">
+                ✔ ${ultimoAtendido.colorObjetivo}
+            </span>`;
+    }
+
+    // Si el juego ha terminado
+    if (estado.juegoTerminado) {
+        finalizarJuegoPartida(estado);
+    }
+
+    // Actualizar tabla de récords
+    if (estado.records) {
+        pintarRecords(estado.records);
+    }
+}
+
+function pintarRecords(records) {
+    const tbd = document.getElementById("tbdRecordsJuego");
+    if (!tbd) return;
+    if (records.length === 0) {
+        tbd.innerHTML = `<tr><td colspan="5" class="texto-suave">Aún no hay récords guardados. ¡Sé el primero!</td></tr>`;
+        return;
+    }
+    tbd.innerHTML = records.map((r, i) => `
+        <tr>
+            <td><strong>#${i + 1}</strong></td>
+            <td><strong>${seguro(r.jugador)}</strong></td>
+            <td><span class="tag" style="background:#dcfce7; color:#166534; font-weight:800; font-size:1rem;">${r.carrosPintados}</span></td>
+            <td>${r.tiempoTotalSegundos} s</td>
+            <td>${new Date(r.fecha).toLocaleDateString("es-MX")} ${new Date(r.fecha).toLocaleTimeString("es-MX", { hour: '2-digit', minute: '2-digit' })}</td>
+        </tr>`).join("");
+}
+
+async function cargarEstadoJuego() {
+    try {
+        const est = await api("/api/colas/juego/estado");
+        pintarTablero(est);
+    } catch (err) {
+        mostrarMensaje("lblMensajeJuego", err.message, "error");
+    }
+}
+
+async function iniciarNuevaPartida() {
+    try {
+        detenerTemporizadores();
+        ultimoAtendido = null;
+        tiempoSegundos = 0;
+        document.getElementById("lblJuegoTiempo").textContent = "00:00";
+        document.getElementById("divFinJuegoModal").classList.add("oculto");
+
+        const r = await api("/api/colas/juego/iniciar", "POST");
+        mostrarMensaje("lblMensajeJuego", "✔ " + r.mensaje, "ok");
+        pintarTablero(r.estado);
+
+        // Iniciar cronómetro de tiempo jugado
+        timerCronometro = setInterval(() => {
+            tiempoSegundos++;
+            const m = String(Math.floor(tiempoSegundos / 60)).padStart(2, "0");
+            const s = String(tiempoSegundos % 60).padStart(2, "0");
+            document.getElementById("lblJuegoTiempo").textContent = `${m}:${s}`;
+        }, 1000);
+
+        // Iniciar ciclo de enfilamiento
+        iniciarCicloEnfilar(r.estado.intervaloLlegada);
+    } catch (err) {
+        mostrarMensaje("lblMensajeJuego", err.message, "error");
+    }
+}
+
+function iniciarCicloEnfilar(intervaloSeg) {
+    if (timerJuego) clearInterval(timerJuego);
+    segundosProximo = intervaloSeg;
+    actualizarBarraEnfilar(segundosProximo, intervaloSeg);
+
+    timerJuego = setInterval(async () => {
+        segundosProximo--;
+        actualizarBarraEnfilar(segundosProximo, estadoJuego ? estadoJuego.intervaloLlegada : 20);
+
+        if (segundosProximo <= 0) {
+            // Tiempo cumplido: llega un nuevo carro
+            try {
+                const r = await api("/api/colas/juego/enfilaSiguiente", "POST");
+                pintarTablero(r.estado);
+                if (r.finDelJuego) {
+                    finalizarJuegoPartida(r.estado);
+                } else {
+                    segundosProximo = r.estado.intervaloLlegada;
+                }
+            } catch (err) {
+                mostrarMensaje("lblMensajeJuego", err.message, "error");
+            }
+        }
+    }, 1000);
+}
+
+function actualizarBarraEnfilar(restantes, total) {
+    const lbl = document.getElementById("lblCuentaAtrasEnfilar");
+    const bar = document.getElementById("barProgresoEnfilar");
+    if (!lbl || !bar) return;
+    lbl.textContent = `${Math.max(0, restantes)} s`;
+    const pct = Math.min(100, Math.max(0, ((total - restantes) / total) * 100));
+    bar.style.width = `${pct}%`;
+}
+
+async function pintarCarroFrente(colorElegido) {
+    if (!estadoJuego || estadoJuego.juegoTerminado) {
+        return mostrarMensaje("lblMensajeJuego", "Inicia una nueva partida para jugar.", "info");
+    }
+    if (estadoJuego.carros.length === 0) {
+        return mostrarMensaje("lblMensajeJuego", "Espera a que llegue un carro a la cola.", "info");
+    }
+
+    try {
+        const r = await api("/api/colas/juego/pintar", "POST", { color: colorElegido });
+        ultimoAtendido = {
+            id: r.atendido.id,
+            colorObjetivo: r.atendido.colorObjetivo,
+            colorHex: r.atendido.colorHex
+        };
+        mostrarMensaje("lblMensajeJuego", "✔ " + r.mensaje, "ok");
+        pintarTablero(r.estado);
+
+        // Si la velocidad cambió, reiniciar el ciclo con el nuevo intervalo
+        if (r.estado.intervaloLlegada !== estadoJuego.intervaloLlegada) {
+            iniciarCicloEnfilar(r.estado.intervaloLlegada);
+        }
+    } catch (err) {
+        mostrarMensaje("lblMensajeJuego", "✖ " + err.message, "error");
+    }
+}
+
+function finalizarJuegoPartida(estado) {
+    detenerTemporizadores();
+    mostrarMensaje("lblMensajeJuego", "🚨 ¡Juego terminado! La cola llegó a 5 carros.", "error");
+
+    const modal = document.getElementById("divFinJuegoModal");
+    if (modal) {
+        document.getElementById("lblRecordCarros").textContent = estado.carrosPintados;
+        document.getElementById("lblRecordTiempo").textContent = `${tiempoSegundos} s`;
+        modal.classList.remove("oculto");
+        modal.scrollIntoView({ behavior: "smooth" });
+    }
+}
+
+function detenerTemporizadores() {
+    if (timerJuego) { clearInterval(timerJuego); timerJuego = null; }
+    if (timerCronometro) { clearInterval(timerCronometro); timerCronometro = null; }
+}
+
+document.getElementById("btnIniciarJuego").addEventListener("click", iniciarNuevaPartida);
+document.getElementById("btnReintentar").addEventListener("click", iniciarNuevaPartida);
+
+document.getElementById("frmGuardarRecord").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const txtJugador = document.getElementById("txtNombreJugador");
+    const jugador = txtJugador.value.trim();
+
+    try {
+        const r = await api("/api/colas/juego/guardarRecord", "POST", { jugador });
+        mostrarMensaje("lblMensajeRecord", "✔ " + r.mensaje, "ok");
+        pintarRecords(r.records);
+    } catch (err) {
+        mostrarMensaje("lblMensajeRecord", err.message, "error");
+    }
+});
+
+renderPaleta();
+cargarEstadoJuego();
+
+// =====================================================================
 //  EJERCICIO 3: ESTACIONAMIENTO PARA AUTOS
 // =====================================================================
 

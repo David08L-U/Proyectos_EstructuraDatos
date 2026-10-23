@@ -7,6 +7,337 @@ const moneda = n => "$" + Number(n).toLocaleString("es-MX", { minimumFractionDig
 const seguro = t => String(t).replace(/[&<>"']/g, c => `&#${c.charCodeAt(0)};`);
 
 // =====================================================================
+//  EJERCICIO 1: PRODUCTOS DISPONIBLES Y RETIRADOS (Víctor)
+// =====================================================================
+
+function pintarSupermercado(estado) {
+    document.getElementById("lblTotalDisponibles").textContent = estado.totalDisponibles;
+    document.getElementById("lblTotalRetirados").textContent = estado.totalRetirados;
+    document.getElementById("lblTotalProcesadosSuper").textContent = estado.totalDisponibles + estado.totalRetirados;
+
+    const tbdDisp = document.getElementById("tbdSuperDisponibles");
+    if (estado.disponibles.length === 0) {
+        tbdDisp.innerHTML = `<tr><td colspan="6" class="texto-suave">El almacén está vacío. Presiona "Escanear producto".</td></tr>`;
+    } else {
+        tbdDisp.innerHTML = estado.disponibles.map(p => `
+            <tr>
+                <td><span class="clave">${p.clave}</span></td>
+                <td><strong>${seguro(p.nombre)}</strong></td>
+                <td>${p.cantidad}</td>
+                <td>${moneda(p.precio)}</td>
+                <td>${moneda(p.precio * p.cantidad)}</td>
+                <td>
+                    <button class="btn btn-peligro btn-sm btn-retirar-prod" data-clave="${p.clave}">Retirar</button>
+                </td>
+            </tr>`).join("");
+    }
+
+    const tbdRet = document.getElementById("tbdSuperRetirados");
+    if (estado.retirados.length === 0) {
+        tbdRet.innerHTML = `<tr><td colspan="6" class="texto-suave">Aún no se han retirado productos del almacén.</td></tr>`;
+    } else {
+        tbdRet.innerHTML = estado.retirados.map(p => `
+            <tr>
+                <td><span class="clave">${p.clave}</span></td>
+                <td><strong>${seguro(p.nombre)}</strong></td>
+                <td>${p.cantidad}</td>
+                <td>${moneda(p.precio)}</td>
+                <td>${moneda(p.precio * p.cantidad)}</td>
+                <td><span class="tag tag-final" style="background:#fee2e2; color:#b91c1c;">Retirado</span></td>
+            </tr>`).join("");
+    }
+}
+
+async function cargarSupermercado() {
+    try {
+        const estado = await api("/api/listas/supermercado");
+        pintarSupermercado(estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeSuper", err.message, "error");
+    }
+}
+
+document.getElementById("btnEscanearUno").addEventListener("click", async () => {
+    try {
+        const r = await api("/api/listas/supermercado/escanear", "POST", { cantidad: 1 });
+        mostrarMensaje("lblMensajeSuper", "✔ " + r.mensaje, "ok");
+        pintarSupermercado(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeSuper", err.message, "error");
+    }
+});
+
+document.getElementById("btnEscanearVarios").addEventListener("click", async () => {
+    try {
+        const r = await api("/api/listas/supermercado/escanear", "POST", { cantidad: 5 });
+        mostrarMensaje("lblMensajeSuper", "✔ " + r.mensaje, "ok");
+        pintarSupermercado(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeSuper", err.message, "error");
+    }
+});
+
+document.getElementById("frmRetirarSuper").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const txtClave = document.getElementById("txtClaveRetirarSuper");
+    const clave = txtClave.value.trim();
+
+    if (clave === "")
+        return mostrarMensaje("lblMensajeRetirarSuper", "Hay datos faltantes: escribe la clave del producto.", "error");
+    if (!/^\d+$/.test(clave))
+        return mostrarMensaje("lblMensajeRetirarSuper", "Clave: introducir sólo números enteros.", "error");
+
+    try {
+        const r = await api("/api/listas/supermercado/retirar/" + encodeURIComponent(clave), "POST");
+        mostrarMensaje("lblMensajeRetirarSuper", "✔ " + r.mensaje, "ok");
+        txtClave.value = "";
+        pintarSupermercado(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeRetirarSuper", err.message, "error");
+    }
+});
+
+document.getElementById("tbdSuperDisponibles").addEventListener("click", async (e) => {
+    const btn = e.target.closest(".btn-retirar-prod");
+    if (!btn) return;
+    const clave = btn.dataset.clave;
+    try {
+        const r = await api("/api/listas/supermercado/retirar/" + encodeURIComponent(clave), "POST");
+        mostrarMensaje("lblMensajeRetirarSuper", "✔ " + r.mensaje, "ok");
+        pintarSupermercado(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeRetirarSuper", err.message, "error");
+    }
+});
+
+document.getElementById("btnVaciarSuper").addEventListener("click", async () => {
+    try {
+        const r = await api("/api/listas/supermercado", "DELETE");
+        mostrarMensaje("lblMensajeSuper", "✔ " + r.mensaje, "ok");
+        document.getElementById("txtClaveRetirarSuper").value = "";
+        pintarSupermercado(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeSuper", err.message, "error");
+    }
+});
+
+// =====================================================================
+//  EJERCICIO 2: PARES E IMPARES (Víctor)
+// =====================================================================
+
+function pintarParesImpares(estado) {
+    document.getElementById("lblTotalNumeros").textContent = estado.totalTodos;
+    document.getElementById("lblTotalPares").textContent = estado.totalPares;
+    document.getElementById("lblTotalImpares").textContent = estado.totalImpares;
+
+    document.getElementById("lblDetallePares").textContent = `${estado.totalPares} números (divisibles entre 2)`;
+    document.getElementById("lblDetalleImpares").textContent = `${estado.totalImpares} números`;
+
+    const divTodos = document.getElementById("divListaTodosNumeros");
+    if (estado.todos.length === 0) {
+        divTodos.innerHTML = `<p class="texto-suave">Aún no se han generado números. Haz clic en "Generar y clasificar".</p>`;
+    } else {
+        divTodos.innerHTML = estado.todos.map(n =>
+            `<span class="chip ${n % 2 === 0 ? 'chip-par' : 'chip-impar'}">${n}</span>`
+        ).join("");
+    }
+
+    const divPares = document.getElementById("divListaPares");
+    if (estado.pares.length === 0) {
+        divPares.innerHTML = `<p class="texto-suave">Sin elementos pares.</p>`;
+    } else {
+        divPares.innerHTML = estado.pares.map(n => `<span class="chip chip-par">${n}</span>`).join("");
+    }
+
+    const divImpares = document.getElementById("divListaImpares");
+    if (estado.impares.length === 0) {
+        divImpares.innerHTML = `<p class="texto-suave">Sin elementos impares.</p>`;
+    } else {
+        divImpares.innerHTML = estado.impares.map(n => `<span class="chip chip-impar">${n}</span>`).join("");
+    }
+}
+
+async function cargarParesImpares() {
+    try {
+        const estado = await api("/api/listas/pareseimpares");
+        pintarParesImpares(estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeParesImpares", err.message, "error");
+    }
+}
+
+document.getElementById("frmGenerarParesImpares").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const txtCantidad = document.getElementById("txtCantidadAleatorios").value.trim();
+    const txtMin = document.getElementById("txtMinAleatorios").value.trim();
+    const txtMax = document.getElementById("txtMaxAleatorios").value.trim();
+
+    if (!/^\d+$/.test(txtCantidad))
+        return mostrarMensaje("lblMensajeParesImpares", "Cantidad: introducir sólo números enteros.", "error");
+    if (!/^-?\d+$/.test(txtMin) || !/^-?\d+$/.test(txtMax))
+        return mostrarMensaje("lblMensajeParesImpares", "Rango: introducir sólo números enteros.", "error");
+
+    try {
+        const r = await api("/api/listas/pareseimpares/generar", "POST", {
+            cantidad: txtCantidad,
+            min: txtMin,
+            max: txtMax
+        });
+        mostrarMensaje("lblMensajeParesImpares", "✔ " + r.mensaje, "ok");
+        pintarParesImpares(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeParesImpares", err.message, "error");
+    }
+});
+
+document.getElementById("frmNumeroManual").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const txtNum = document.getElementById("txtNumeroManual");
+    const num = txtNum.value.trim();
+
+    if (num === "")
+        return mostrarMensaje("lblMensajeParesImpares", "Hay datos faltantes: escribe un número.", "error");
+    if (!/^-?\d+$/.test(num))
+        return mostrarMensaje("lblMensajeParesImpares", "Introducir sólo números enteros.", "error");
+
+    try {
+        const r = await api("/api/listas/pareseimpares/agregar", "POST", { numero: num });
+        mostrarMensaje("lblMensajeParesImpares", "✔ " + r.mensaje, "ok");
+        txtNum.value = "";
+        pintarParesImpares(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeParesImpares", err.message, "error");
+    }
+});
+
+document.getElementById("btnVaciarParesImpares").addEventListener("click", async () => {
+    try {
+        const r = await api("/api/listas/pareseimpares", "DELETE");
+        mostrarMensaje("lblMensajeParesImpares", "✔ " + r.mensaje, "ok");
+        pintarParesImpares(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeParesImpares", err.message, "error");
+    }
+});
+
+// =====================================================================
+//  EJERCICIO 3: APROBADOS Y REPROBADOS (Víctor)
+// =====================================================================
+
+function pintarAlumnos(estado) {
+    document.getElementById("lblTotalAprobados").textContent = estado.totalAprobados;
+    document.getElementById("lblTotalReprobados").textContent = estado.totalReprobados;
+    document.getElementById("lblPromedioAlumnos").textContent = Number(estado.promedioGeneral).toFixed(2);
+
+    const tbdAprob = document.getElementById("tbdAlumnosAprobados");
+    if (estado.aprobados.length === 0) {
+        tbdAprob.innerHTML = `<tr><td colspan="5" class="texto-suave">No hay alumnos aprobados registrados.</td></tr>`;
+    } else {
+        tbdAprob.innerHTML = estado.aprobados.map((a, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td><strong>${seguro(a.nombre)}</strong></td>
+                <td><strong style="color:#16a34a;">${Number(a.calificacion).toFixed(2)}</strong></td>
+                <td><span class="tag" style="background:#dcfce7; color:#166534;">Aprobado</span></td>
+                <td><button class="btn btn-secundario btn-sm btn-eliminar-alumno" data-id="${a.id}">✕</button></td>
+            </tr>`).join("");
+    }
+
+    const tbdReprob = document.getElementById("tbdAlumnosReprobados");
+    if (estado.reprobados.length === 0) {
+        tbdReprob.innerHTML = `<tr><td colspan="5" class="texto-suave">No hay alumnos reprobados registrados.</td></tr>`;
+    } else {
+        tbdReprob.innerHTML = estado.reprobados.map((a, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td><strong>${seguro(a.nombre)}</strong></td>
+                <td><strong style="color:#dc2626;">${Number(a.calificacion).toFixed(2)}</strong></td>
+                <td><span class="tag" style="background:#fee2e2; color:#991b1b;">Reprobado (&lt; 7)</span></td>
+                <td><button class="btn btn-secundario btn-sm btn-eliminar-alumno" data-id="${a.id}">✕</button></td>
+            </tr>`).join("");
+    }
+}
+
+async function cargarAlumnos() {
+    try {
+        const estado = await api("/api/listas/alumnos");
+        pintarAlumnos(estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeAlumnos", err.message, "error");
+    }
+}
+
+document.getElementById("frmCapturarAlumno").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const txtNom = document.getElementById("txtNombreAlumno");
+    const txtCal = document.getElementById("txtCalificacionAlumno");
+
+    const nombre = txtNom.value.trim();
+    const calificacion = txtCal.value.trim();
+
+    if (nombre === "" || calificacion === "")
+        return mostrarMensaje("lblMensajeAlumnos", "Hay datos faltantes: ingresa el nombre y la calificación.", "error");
+
+    if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñÜü ]{2,50}$/.test(nombre))
+        return mostrarMensaje("lblMensajeAlumnos", "Nombre de alumno: introduce sólo letras.", "error");
+
+    if (!/^\d+([.,]\d{1,2})?$/.test(calificacion))
+        return mostrarMensaje("lblMensajeAlumnos", "Calificación: introducir sólo números (ej. 8.5).", "error");
+
+    const numCalif = Number(calificacion.replace(",", "."));
+    if (numCalif < 0 || numCalif > 10)
+        return mostrarMensaje("lblMensajeAlumnos", "La calificación debe estar entre 0 y 10.", "error");
+
+    try {
+        const r = await api("/api/listas/alumnos", "POST", { nombre, calificacion });
+        mostrarMensaje("lblMensajeAlumnos", "✔ " + r.mensaje, "ok");
+        txtNom.value = "";
+        txtCal.value = "";
+        txtNom.focus();
+        pintarAlumnos(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeAlumnos", err.message, "error");
+    }
+});
+
+document.getElementById("btnDemoAlumnos").addEventListener("click", async () => {
+    try {
+        const r = await api("/api/listas/alumnos/demo", "POST");
+        mostrarMensaje("lblMensajeAlumnos", "✔ " + r.mensaje, "ok");
+        pintarAlumnos(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeAlumnos", err.message, "error");
+    }
+});
+
+document.getElementById("btnVaciarAlumnos").addEventListener("click", async () => {
+    try {
+        const r = await api("/api/listas/alumnos", "DELETE");
+        mostrarMensaje("lblMensajeAlumnos", "✔ " + r.mensaje, "ok");
+        pintarAlumnos(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeAlumnos", err.message, "error");
+    }
+});
+
+document.addEventListener("click", async (e) => {
+    const btn = e.target.closest(".btn-eliminar-alumno");
+    if (!btn) return;
+    const id = btn.dataset.id;
+    try {
+        const r = await api("/api/listas/alumnos/" + encodeURIComponent(id), "DELETE");
+        mostrarMensaje("lblMensajeAlumnos", "✔ " + r.mensaje, "ok");
+        pintarAlumnos(r.estado);
+    } catch (err) {
+        mostrarMensaje("lblMensajeAlumnos", err.message, "error");
+    }
+});
+
+cargarSupermercado();
+cargarParesImpares();
+cargarAlumnos();
+
+// =====================================================================
 //  EJERCICIO 4: ELIMINAR Y ORDENAR PRODUCTOS
 // =====================================================================
 let estadoCompra = null;        // última respuesta de la API

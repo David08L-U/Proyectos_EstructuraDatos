@@ -8,19 +8,19 @@
     "net10.0": []
   },
   "packageFolders": {
-    "C:\\Users\\david\\.nuget\\packages\\": {}
+    "C:\\Users\\mende\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Hom\\CUATRI_4\\ESTRUCTURA_D_DATOS\\Unidad_2\\Ejercicos_Generales\\Proyectos_Estructuras\\Proyectos_Estructuras.csproj",
+      "projectUniqueName": "C:\\Users\\mende\\git-prac-miri\\Proyectos_EstructuraDatos\\Proyectos_Estructuras.csproj",
       "projectName": "Proyectos_Estructuras",
-      "projectPath": "C:\\Hom\\CUATRI_4\\ESTRUCTURA_D_DATOS\\Unidad_2\\Ejercicos_Generales\\Proyectos_Estructuras\\Proyectos_Estructuras.csproj",
-      "packagesPath": "C:\\Users\\david\\.nuget\\packages\\",
-      "outputPath": "C:\\Hom\\CUATRI_4\\ESTRUCTURA_D_DATOS\\Unidad_2\\Ejercicos_Generales\\Proyectos_Estructuras\\obj\\",
+      "projectPath": "C:\\Users\\mende\\git-prac-miri\\Proyectos_EstructuraDatos\\Proyectos_Estructuras.csproj",
+      "packagesPath": "C:\\Users\\mende\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\mende\\git-prac-miri\\Proyectos_EstructuraDatos\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\david\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\mende\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net10.0"
@@ -68,7 +68,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.113/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.103/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.AspNetCore": "(,10.0.32767]",
           "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

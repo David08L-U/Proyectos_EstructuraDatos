@@ -29,9 +29,129 @@
             <p class="pendiente">En construcción…</p>
         </section>
 
+        <!-- =========================================================
+             EJERCICIO 2 · JUEGO PINTAR COCHES (Víctor)
+             ========================================================= -->
         <section id="ej2" class="ejercicio">
-            <h2>Ejercicio 2 · Juego: pintar coches</h2>
-            <p class="pendiente">En construcción…</p>
+            <h2>Ejercicio 2 · Juego: Pintar coches</h2>
+            <p class="descripcion">
+                Juego interactivo con estructura de <strong>Cola (FIFO: primero en entrar, primero en salir)</strong>.
+                Los coches se enfilan automáticamente (iniciando cada 20 segundos). Como jugador debes
+                <strong>atender y pintar el primer coche</strong> que llega (el del <strong>frente</strong>),
+                seleccionando el color requerido en la <strong>paleta de colores</strong>.
+                La velocidad de llegada aumenta cada <strong>3 carros pintados</strong>.
+                ¡El juego termina cuando la cola de atención llega a <strong>5 carros</strong>!
+            </p>
+
+            <!-- Tablero de control y métricas -->
+            <div class="panel visible">
+                <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
+                    <div>
+                        <button id="btnIniciarJuego" type="button" class="btn" style="font-size:1.05rem; padding:10px 20px;">
+                            🎮 Iniciar nueva partida
+                        </button>
+                    </div>
+                    <div style="flex:1; min-width:240px; max-width:380px;">
+                        <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:4px;">
+                            <span>Próximo carro enfilándose:</span>
+                            <strong id="lblCuentaAtrasEnfilar">20 s</strong>
+                        </div>
+                        <div style="background:var(--borde); height:8px; border-radius:4px; overflow:hidden;">
+                            <div id="barProgresoEnfilar" style="background:var(--colas); width:0%; height:100%; transition:width 0.2s linear;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="indicadores" style="margin-top:16px;">
+                    <div><span id="lblJuegoPintados">0</span><small>carros pintados</small></div>
+                    <div><span id="lblJuegoTiempo">00:00</span><small>tiempo total</small></div>
+                    <div><span id="lblJuegoColaCount">0 / 5</span><small id="lblJuegoColaEstado">cola de atención</small></div>
+                    <div><span id="lblJuegoVelocidad">Cada 20s</span><small>velocidad llegada</small></div>
+                </div>
+                <p id="lblMensajeJuego" class="mensaje" style="margin-top:12px;"></p>
+            </div>
+
+            <!-- Pista de atención de carros -->
+            <div style="margin-top:24px;">
+                <div class="encabezado-tabla">
+                    <h3 class="sub">Pista de Atención (Cola FIFO - Máximo 5 carros)</h3>
+                    <span style="font-size:.85rem; color:var(--texto-suave);">Flujo: Salida ⇦ Frente (atendiendo) ⇦ Enfilándose</span>
+                </div>
+
+                <div class="pista-coches-contenedor">
+                    <!-- Casilla Atendido -->
+                    <div class="zona-coche zona-atendido">
+                        <span class="tag" style="background:#dcfce7; color:#166534; font-weight:700;">Atendido</span>
+                        <div id="cocheAtendidoVisual" class="coche-tarjeta vacio">
+                            <img src="img/auto.svg" alt="Auto" class="coche-svg">
+                            <span class="etiqueta-color" style="background:#e2e8f0; color:#64748b;">Ninguno</span>
+                        </div>
+                    </div>
+
+                    <!-- Separador flecha -->
+                    <div class="flecha-flujo">⇦</div>
+
+                    <!-- Cola de carros enfilados (máximo 5) -->
+                    <div id="divColaCochesVisual" class="cola-coches-linea">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+
+                    <!-- Separador flecha -->
+                    <div class="flecha-flujo">⇦</div>
+
+                    <!-- Zona de enfilamiento -->
+                    <div class="zona-coche zona-enfilandose">
+                        <span class="tag" style="background:#fef3c7; color:#92400e; font-weight:700;">Enfilándose</span>
+                        <div class="coche-tarjeta enfilandose-tarjeta">
+                            <img src="img/auto.svg" alt="Auto aproximándose" class="coche-svg opaco">
+                            <span class="etiqueta-color" style="background:#e2e8f0; color:#64748b;">En camino...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paleta de colores interactiva -->
+            <div class="panel visible" style="margin-top:24px;">
+                <h3>🎨 Paleta de colores</h3>
+                <p class="texto-suave">
+                    Haz clic en el color que coincida con la <strong>etiqueta del carro del FRENTE</strong> para pintarlo y retirarlo de la cola.
+                </p>
+                <div id="divPaletaColores" class="paleta-grid" style="margin-top:14px;">
+                    <!-- 9 botones de colores -->
+                </div>
+            </div>
+
+            <!-- Modal / Tarjeta de Fin de Partida -->
+            <div id="divFinJuegoModal" class="panel resumen oculto" style="margin-top:24px; border:2px solid #dc2626; background:#fef2f2;">
+                <h3 style="color:#b91c1c; font-size:1.3rem;">🚨 ¡JUEGO TERMINADO!</h3>
+                <p style="margin-top:4px;">
+                    La cola de atención se saturó con <strong>5 carros enfilados</strong> sin atender.
+                </p>
+                <div style="margin:16px 0; display:flex; gap:20px; font-size:1.1rem;">
+                    <p>Carros pintados: <strong id="lblRecordCarros" style="color:#16a34a; font-size:1.4rem;">0</strong></p>
+                    <p>Tiempo total: <strong id="lblRecordTiempo" style="color:#2563eb; font-size:1.4rem;">0 s</strong></p>
+                </div>
+                <form id="frmGuardarRecord" class="fila-campos" style="max-width:500px;" autocomplete="off" novalidate>
+                    <div class="campo" style="flex:1;">
+                        <label for="txtNombreJugador">Nombre del jugador</label>
+                        <input id="txtNombreJugador" type="text" maxlength="30" value="Víctor" placeholder="Escribe tu nombre">
+                    </div>
+                    <button id="btnGuardarRecord" type="submit" class="btn" style="margin-top:22px;">Guardar récord</button>
+                    <button id="btnReintentar" type="button" class="btn btn-secundario" style="margin-top:22px;">Jugar otra vez</button>
+                </form>
+                <p id="lblMensajeRecord" class="mensaje"></p>
+            </div>
+
+            <!-- Tabla de Récords -->
+            <div style="margin-top:28px;">
+                <h3 class="sub">🏆 Mejores Récords Registrados</h3>
+                <table id="tblRecordsJuego">
+                    <thead>
+                        <tr><th>#</th><th>Jugador</th><th>Carros Pintados</th><th>Tiempo Jugado</th><th>Fecha</th></tr>
+                    </thead>
+                    <tbody id="tbdRecordsJuego"></tbody>
+                </table>
+            </div>
         </section>
 
         <section id="ej3" class="ejercicio">
