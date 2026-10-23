@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estructuras de Datos – Unidad II</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ===== Encabezado ===== -->
+    <header class="encabezado">
+        <img id="imgLogo" src="img/logo.svg" alt="Logo" class="logo">
+        <div>
+            <h1 id="lblTitulo">Estructuras de Datos</h1>
+            <p id="lblSubtitulo">Unidad II · Listas, Pilas y Colas</p>
+        </div>
+        <span id="lblEstadoApi" class="estado-api">Verificando API…</span>
+    </header>
+
+    <main class="contenedor">
+
+        <!-- ===================== LISTAS ===================== -->
+        <section id="secListas" class="bloque bloque-listas">
+            <div class="bloque-titulo">
+                <span class="insignia">L</span>
+                <div>
+                    <h2>Listas</h2>
+                    <p>5 ejercicios · 50 puntos</p>
+                </div>
+            </div>
+            <nav class="menu-ejercicios">
+                <a id="lnkListasEj1" href="listas.html#ej1" class="tarjeta"><span class="num">1</span>Productos disponibles y retirados</a>
+                <a id="lnkListasEj2" href="listas.html#ej2" class="tarjeta"><span class="num">2</span>Pares e impares</a>
+                <a id="lnkListasEj3" href="listas.html#ej3" class="tarjeta"><span class="num">3</span>Aprobados y reprobados</a>
+                <a id="lnkListasEj4" href="listas.html#ej4" class="tarjeta"><span class="num">4</span>Eliminar y ordenar productos</a>
+                <a id="lnkListasEj5" href="listas.html#ej5" class="tarjeta"><span class="num">5</span>Listar palabras por letra</a>
+            </nav>
+        </section>
+
+        <!-- ===================== PILAS ===================== -->
+        <section id="secPilas" class="bloque bloque-pilas">
+            <div class="bloque-titulo">
+                <span class="insignia">P</span>
+                <div>
+                    <h2>Pilas</h2>
+                    <p>4 ejercicios · 40 puntos</p>
+                </div>
+            </div>
+            <nav class="menu-ejercicios">
+                <a id="lnkPilasEj1" href="pilas.html#ej1" class="tarjeta"><span class="num">1</span>Invertir palabra</a>
+                <a id="lnkPilasEj2" href="pilas.html#ej2" class="tarjeta"><span class="num">2</span>Palíndromo</a>
+                <a id="lnkPilasEj3" href="pilas.html#ej3" class="tarjeta"><span class="num">3</span>Suma de números grandes</a>
+                <a id="lnkPilasEj4" href="pilas.html#ej4" class="tarjeta"><span class="num">4</span>Reemplazar valor</a>
+            </nav>
+        </section>
+
+        <!-- ===================== COLAS ===================== -->
+        <section id="secColas" class="bloque bloque-colas">
+            <div class="bloque-titulo">
+                <span class="insignia">C</span>
+                <div>
+                    <h2>Colas</h2>
+                    <p>3 ejercicios · 60 puntos</p>
+                </div>
+            </div>
+            <nav class="menu-ejercicios">
+                <a id="lnkColasEj1" href="colas.html#ej1" class="tarjeta"><span class="num">1</span>Ventanilla de un banco</a>
+                <a id="lnkColasEj2" href="colas.html#ej2" class="tarjeta"><span class="num">2</span>Juego: pintar coches</a>
+                <a id="lnkColasEj3" href="colas.html#ej3" class="tarjeta"><span class="num">3</span>Estacionamiento para autos</a>
+            </nav>
+        </section>
+
+    </main>
+
+    <footer class="pie">Estructura de Datos · DSM 4° · Octubre 2026</footer>
+
+    <script src="app.js"></script>
+    <script>
+        // Revisa que la API (C#) esté respondiendo
+        verificarApi("lblEstadoApi");
+    </script>
+</body>
+</html>

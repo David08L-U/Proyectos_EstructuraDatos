@@ -1,0 +1,229 @@
+/* ============================================================
+   styles.css – Estilos generales del proyecto
+   ============================================================ */
+
+:root {
+    --fondo: #f1f5f9;
+    --tarjeta: #ffffff;
+    --texto: #0f172a;
+    --texto-suave: #64748b;
+    --borde: #e2e8f0;
+    --oscuro: #1e293b;
+
+    --listas: #3b82f6;   /* azul */
+    --pilas: #f59e0b;    /* ámbar */
+    --colas: #8b5cf6;    /* morado */
+
+    --ok: #16a34a;
+    --error: #dc2626;
+
+    --acento: var(--oscuro);   /* cada página lo cambia */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Color de acento según la página */
+.tema-listas { --acento: var(--listas); }
+.tema-pilas  { --acento: var(--pilas); }
+.tema-colas  { --acento: var(--colas); }
+
+/* ---------- Encabezado ---------- */
+.encabezado {
+    background: var(--oscuro);
+    color: #fff;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 4px solid var(--acento);
+}
+.encabezado h1 { font-size: 1.5rem; font-weight: 700; }
+.encabezado p  { color: #cbd5e1; font-size: .9rem; }
+.logo { width: 48px; height: 48px; }
+
+.estado-api {
+    margin-left: auto;
+    font-size: .85rem;
+    color: #cbd5e1;
+}
+.estado-api.ok    { color: #4ade80; }
+.estado-api.error { color: #f87171; }
+
+.btn-volver {
+    color: #fff;
+    text-decoration: none;
+    background: rgba(255,255,255,.1);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+.btn-volver:hover { background: rgba(255,255,255,.2); }
+
+/* ---------- Contenedor ---------- */
+.contenedor {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    flex: 1;
+}
+
+/* ---------- Menú principal: bloques por estructura ---------- */
+.bloque {
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-left: 6px solid var(--color-bloque);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+}
+.bloque-listas { --color-bloque: var(--listas); }
+.bloque-pilas  { --color-bloque: var(--pilas); }
+.bloque-colas  { --color-bloque: var(--colas); }
+
+.bloque-titulo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+.bloque-titulo h2 { font-size: 1.3rem; }
+.bloque-titulo p  { color: var(--texto-suave); font-size: .9rem; }
+
+.insignia {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    background: var(--color-bloque);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.3rem;
+    display: grid;
+    place-items: center;
+}
+
+.menu-ejercicios {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+.tarjeta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--texto);
+    font-weight: 600;
+    transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.tarjeta:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-bloque);
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+.tarjeta .num {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--fondo);
+    color: var(--color-bloque);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+}
+
+/* ---------- Pestañas de cada página ---------- */
+.pestanas {
+    background: var(--tarjeta);
+    border-bottom: 1px solid var(--borde);
+    display: flex;
+    gap: 4px;
+    padding: 0 16px;
+    overflow-x: auto;
+}
+.pestanas a {
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--texto-suave);
+    font-weight: 600;
+    white-space: nowrap;
+    border-bottom: 3px solid transparent;
+}
+.pestanas a:hover  { color: var(--texto); }
+.pestanas a.activa { color: var(--acento); border-bottom-color: var(--acento); }
+
+/* ---------- Secciones de ejercicio ---------- */
+.ejercicio {
+    display: none;
+    background: var(--tarjeta);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 24px;
+}
+.ejercicio.visible { display: block; }
+.ejercicio h2 { margin-bottom: 16px; color: var(--acento); }
+.pendiente { color: var(--texto-suave); font-style: italic; }
+
+/* ---------- Formularios (para los ejercicios) ---------- */
+.campo { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.campo label { font-weight: 600; font-size: .9rem; }
+input, select {
+    padding: 10px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+}
+input:focus, select:focus { outline: 2px solid var(--acento); border-color: transparent; }
+
+.btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    background: var(--acento);
+    color: #fff;
+    font-weight: 600;
+    font-size: .95rem;
+    cursor: pointer;
+}
+.btn:hover { filter: brightness(1.1); }
+.btn-secundario { background: var(--texto-suave); }
+
+/* ---------- Mensajes de validación ---------- */
+.mensaje { padding: 10px 14px; border-radius: 8px; margin: 12px 0; font-weight: 600; }
+.mensaje:empty { display: none; }
+.mensaje-ok    { background: #dcfce7; color: var(--ok); }
+.mensaje-error { background: #fee2e2; color: var(--error); }
+.mensaje-info  { background: #e0e7ff; color: #3730a3; }
+
+/* ---------- Tablas ---------- */
+table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+th, td { padding: 10px; border-bottom: 1px solid var(--borde); text-align: left; }
+th { background: var(--fondo); font-size: .85rem; text-transform: uppercase; color: var(--texto-suave); }
+
+/* ---------- Pie ---------- */
+.pie {
+    text-align: center;
+    padding: 16px;
+    color: var(--texto-suave);
+    font-size: .85rem;
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 600px) {
+    .encabezado { flex-wrap: wrap; }
+    .estado-api { margin-left: 0; width: 100%; }
+}
