@@ -486,38 +486,104 @@ textarea:focus { outline: 2px solid var(--acento); border-color: transparent; }
     overflow-y: auto;
 }
 
-/* Juego Pintar Coches */
-.pista-coches-contenedor {
-    background: var(--tarjeta);
+/* ============================================================
+   JUEGO PINTAR COCHES (Mejorado - Fiel al PDF)
+   ============================================================ */
+
+/* Guía de pasos */
+.guia-juego-pasos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.paso-card {
+    background: #fff;
     border: 1px solid var(--borde);
-    border-radius: 14px;
-    padding: 20px 16px;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+
+.paso-card.paso-alerta {
+    background: #fffbeb;
+    border-color: #fde68a;
+}
+
+.paso-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--colas);
+    color: #fff;
+    font-weight: 800;
+    font-size: .85rem;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.paso-card.paso-alerta .paso-num {
+    background: #f59e0b;
+}
+
+.paso-card strong {
+    display: block;
+    font-size: .9rem;
+    color: var(--texto);
+    margin-bottom: 2px;
+}
+
+.paso-card p {
+    font-size: .8rem;
+    color: var(--texto-suave);
+    line-height: 1.3;
+}
+
+/* Pista de Coches (Carril) */
+.pista-coches-contenedor {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     overflow-x: auto;
-    min-height: 190px;
+    min-height: 220px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,.03);
 }
 
 .flecha-flujo {
-    font-size: 1.8rem;
-    color: var(--texto-suave);
+    font-size: 1.6rem;
+    color: #94a3b8;
     user-select: none;
     flex-shrink: 0;
+    font-weight: bold;
+    animation: moverFlecha 1.5s infinite ease-in-out;
+}
+
+@keyframes moverFlecha {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-4px); }
 }
 
 .cola-coches-linea {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 14px;
     flex: 1;
-    min-width: 200px;
+    min-width: 240px;
 }
 
 .pista-vacia {
     color: var(--texto-suave);
     font-style: italic;
-    padding: 20px;
+    padding: 30px;
     width: 100%;
     text-align: center;
 }
@@ -531,29 +597,56 @@ textarea:focus { outline: 2px solid var(--acento); border-color: transparent; }
 }
 
 .coche-tarjeta {
-    width: 130px;
-    padding: 10px 8px;
+    width: 140px;
+    padding: 12px 10px;
     background: #f8fafc;
-    border: 2px solid var(--borde);
-    border-radius: 10px;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    transition: transform .2s, box-shadow .2s;
+    gap: 8px;
+    transition: transform .25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow .25s ease, border-color .25s ease;
     flex-shrink: 0;
+    position: relative;
 }
 
 .coche-tarjeta.coche-frente {
-    border-color: var(--colas);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, .25);
+    border-color: #8b5cf6;
     background: #faf5ff;
-    transform: scale(1.05);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, .25), 0 8px 16px rgba(139, 92, 246, .15);
+    transform: scale(1.06);
+    z-index: 2;
+    animation: pulsoFrente 2s infinite ease-in-out;
+}
+
+@keyframes pulsoFrente {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(139, 92, 246, .3), 0 4px 10px rgba(0,0,0,.08); }
+    50% { box-shadow: 0 0 0 6px rgba(139, 92, 246, .5), 0 8px 20px rgba(139, 92, 246, .25); }
 }
 
 .coche-tarjeta.atendido-exito {
     border-color: #16a34a;
     background: #f0fdf4;
+    box-shadow: 0 4px 12px rgba(22, 163, 74, .15);
+}
+
+.coche-tarjeta.enfilandose-tarjeta {
+    border-style: dashed;
+    border-color: #f59e0b;
+    background: #fffbeb;
+    opacity: 0.9;
+}
+
+.coche-tarjeta.shake-error {
+    animation: shakeError 0.4s ease-in-out;
+    border-color: #dc2626 !important;
+}
+
+@keyframes shakeError {
+    0%, 100% { transform: scale(1.06) translateX(0); }
+    20%, 60% { transform: scale(1.06) translateX(-8px); }
+    40%, 80% { transform: scale(1.06) translateX(8px); }
 }
 
 .coche-header {
@@ -563,86 +656,90 @@ textarea:focus { outline: 2px solid var(--acento); border-color: transparent; }
     gap: 4px;
 }
 
-.coche-svg {
-    width: 60px;
-    height: 38px;
+.coche-svg-inline {
+    width: 72px;
+    height: 45px;
     margin: 0 auto;
     display: block;
-}
-
-.coche-svg.opaco {
-    opacity: 0.4;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.08));
 }
 
 .anim-pintado {
-    animation: saltoPintado .3s ease-out;
+    animation: saltoPintado .35s ease-out;
 }
 
 @keyframes saltoPintado {
-    0% { transform: scale(0.9); }
-    50% { transform: scale(1.15); }
+    0% { transform: scale(0.85); }
+    50% { transform: scale(1.2); }
     100% { transform: scale(1); }
 }
 
-.etiqueta-color {
-    display: inline-block;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: .8rem;
-    font-weight: 600;
-}
-
-.etiqueta-color-pedida {
-    background: #fff;
-    padding: 4px 6px;
-    border-radius: 6px;
-    font-size: .78rem;
-    border: 1px solid var(--borde);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.etiqueta-color-pedida strong {
+/* Etiqueta / Píldora del color pedido debajo del carro */
+.etiqueta-color-badge {
+    display: block;
+    padding: 6px 12px;
+    border-radius: 999px;
     font-size: .85rem;
-    color: var(--texto);
+    font-weight: 800;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    transition: transform .15s;
 }
 
-/* Paleta de colores */
-.paleta-grid {
+.etiqueta-fija {
+    display: block;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: .82rem;
+    font-weight: 700;
+    background: #e2e8f0;
+    color: #475569;
+}
+
+/* Paleta de Colores en Cuadrícula 3x3 (Fiel al PDF) */
+.paleta-grid-3x3 {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 580px;
+    margin: 0 auto;
 }
 
 .btn-color-paleta {
-    padding: 10px 14px;
-    border-radius: 10px;
-    border: 1px solid rgba(0, 0, 0, .12);
+    padding: 16px 14px;
+    border-radius: 12px;
+    border: 2px solid rgba(0, 0, 0, .15);
     cursor: pointer;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 10px;
-    font-weight: 700;
-    font-size: .95rem;
-    transition: transform .15s, box-shadow .15s;
-    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    justify-content: center;
+    gap: 6px;
+    font-weight: 800;
+    font-size: 1rem;
+    transition: transform .15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow .15s ease, filter .15s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,.12);
+    min-height: 72px;
+    user-select: none;
 }
 
 .btn-color-paleta:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,.18);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 18px rgba(0,0,0,.22);
+    filter: brightness(1.05);
 }
 
 .btn-color-paleta:active {
-    transform: translateY(0);
+    transform: translateY(1px) scale(0.98);
 }
 
-.muestra-color {
-    width: 20px;
-    height: 20px;
+.btn-color-paleta .muestra-color {
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
-    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.3);
 }
 
 /* ---------- Pie ---------- */

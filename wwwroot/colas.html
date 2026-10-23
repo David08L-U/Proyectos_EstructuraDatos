@@ -37,21 +37,59 @@
             <p class="descripcion">
                 Juego interactivo con estructura de <strong>Cola (FIFO: primero en entrar, primero en salir)</strong>.
                 Los coches se enfilan automáticamente (iniciando cada 20 segundos). Como jugador debes
-                <strong>atender y pintar el primer coche</strong> que llega (el del <strong>frente</strong>),
+                <strong>atender y pintar el primer coche</strong> que llega (el del <strong>Frente</strong>),
                 seleccionando el color requerido en la <strong>paleta de colores</strong>.
                 La velocidad de llegada aumenta cada <strong>3 carros pintados</strong>.
                 ¡El juego termina cuando la cola de atención llega a <strong>5 carros</strong>!
             </p>
 
+            <!-- Guía visual: Cómo funciona el juego -->
+            <div class="guia-juego-pasos">
+                <div class="paso-card">
+                    <span class="paso-num">1</span>
+                    <div>
+                        <strong>Mira el carro del Frente</strong>
+                        <p>Observa el color que solicita en su etiqueta inferior (ej. Naranja).</p>
+                    </div>
+                </div>
+                <div class="paso-card">
+                    <span class="paso-num">2</span>
+                    <div>
+                        <strong>Elige el color en la Paleta</strong>
+                        <p>Haz clic en ese mismo color en la cuadrícula de 9 colores.</p>
+                    </div>
+                </div>
+                <div class="paso-card">
+                    <span class="paso-num">3</span>
+                    <div>
+                        <strong>¡Coche Atendido!</strong>
+                        <p>El carro se pinta, sale de la cola (FIFO) y pasa a Atendido.</p>
+                    </div>
+                </div>
+                <div class="paso-card paso-alerta">
+                    <span class="paso-num">⚠️</span>
+                    <div>
+                        <strong>Límite: 5 carros</strong>
+                        <p>Llegan carros cada 20s. Si se acumulan 5 en la cola, pierdes.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tablero de control y métricas -->
             <div class="panel visible">
                 <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px;">
-                    <div>
-                        <button id="btnIniciarJuego" type="button" class="btn" style="font-size:1.05rem; padding:10px 20px;">
-                            🎮 Iniciar nueva partida
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button id="btnIniciarJuego" type="button" class="btn" style="font-size:1rem; padding:10px 18px;">
+                            🎮 Nueva partida
+                        </button>
+                        <button id="btnEjemploPdf" type="button" class="btn btn-secundario" style="font-size:.95rem; padding:10px 14px;" title="Carga el ejemplo exacto mostrado en el PDF con Naranja, Rojo y Verde">
+                            💡 Cargar ejemplo del PDF
+                        </button>
+                        <button id="btnToggleSonido" type="button" class="btn btn-secundario" style="font-size:.95rem; padding:10px 12px;">
+                            🔊 Sonido: ON
                         </button>
                     </div>
-                    <div style="flex:1; min-width:240px; max-width:380px;">
+                    <div style="flex:1; min-width:240px; max-width:360px;">
                         <div style="display:flex; justify-content:space-between; font-size:.85rem; margin-bottom:4px;">
                             <span>Próximo carro enfilándose:</span>
                             <strong id="lblCuentaAtrasEnfilar">20 s</strong>
@@ -75,17 +113,17 @@
             <div style="margin-top:24px;">
                 <div class="encabezado-tabla">
                     <h3 class="sub">Pista de Atención (Cola FIFO - Máximo 5 carros)</h3>
-                    <span style="font-size:.85rem; color:var(--texto-suave);">Flujo: Salida ⇦ Frente (atendiendo) ⇦ Enfilándose</span>
+                    <span style="font-size:.85rem; color:var(--texto-suave);">Flujo FIFO: Atendido ⇦ Frente (atendiendo) ⇦ Enfilándose</span>
                 </div>
 
                 <div class="pista-coches-contenedor">
                     <!-- Casilla Atendido -->
                     <div class="zona-coche zona-atendido">
                         <span class="tag" style="background:#dcfce7; color:#166534; font-weight:700;">Atendido</span>
-                        <div id="cocheAtendidoVisual" class="coche-tarjeta vacio">
-                            <img src="img/auto.svg" alt="Auto" class="coche-svg">
-                            <span class="etiqueta-color" style="background:#e2e8f0; color:#64748b;">Ninguno</span>
+                        <div id="cocheAtendidoVisual" class="coche-tarjeta atendido-exito">
+                            <!-- Se llena dinámicamente con el coche pintado -->
                         </div>
+                        <span class="etiqueta-fija">Atendido</span>
                     </div>
 
                     <!-- Separador flecha -->
@@ -103,21 +141,24 @@
                     <div class="zona-coche zona-enfilandose">
                         <span class="tag" style="background:#fef3c7; color:#92400e; font-weight:700;">Enfilándose</span>
                         <div class="coche-tarjeta enfilandose-tarjeta">
-                            <img src="img/auto.svg" alt="Auto aproximándose" class="coche-svg opaco">
-                            <span class="etiqueta-color" style="background:#e2e8f0; color:#64748b;">En camino...</span>
+                            <div id="cocheEnfilandoseSvg"></div>
+                            <span id="lblEnfilandoseTiempo" class="texto-suave" style="font-size:.8rem; font-weight:bold;">En camino...</span>
                         </div>
+                        <span class="etiqueta-fija">Enfilándose</span>
                     </div>
                 </div>
             </div>
 
             <!-- Paleta de colores interactiva -->
             <div class="panel visible" style="margin-top:24px;">
-                <h3>🎨 Paleta de colores</h3>
-                <p class="texto-suave">
-                    Haz clic en el color que coincida con la <strong>etiqueta del carro del FRENTE</strong> para pintarlo y retirarlo de la cola.
-                </p>
-                <div id="divPaletaColores" class="paleta-grid" style="margin-top:14px;">
-                    <!-- 9 botones de colores -->
+                <div style="text-align:center; margin-bottom:14px;">
+                    <h3 style="font-size:1.25rem;">🎨 Paleta de colores</h3>
+                    <p class="texto-suave">
+                        Haz clic en el color solicitado por la etiqueta del <strong>carro del FRENTE</strong> para pintarlo:
+                    </p>
+                </div>
+                <div id="divPaletaColores" class="paleta-grid-3x3">
+                    <!-- 9 botones de colores en cuadrícula 3x3 -->
                 </div>
             </div>
 

@@ -59,6 +59,7 @@ namespace Proyectos_Estructuras.Controllers
         private static int carrosPintadosPartida = 0;
         private static DateTime? inicioPartida = null;
         private static bool juegoTerminado = false;
+        private static CarroJuego? ultimoCarroAtendido = new CarroJuego(0, "Amarillo", "#EAB308") { Pintado = true, ColorPintado = "Amarillo" };
         private static readonly object candadoJuego = new object();
 
         public class PintarColorDto
@@ -79,8 +80,27 @@ namespace Proyectos_Estructuras.Controllers
             return Math.Max(5, intervalo);
         }
 
+        private static void AsegurarInicializacionDemo()
+        {
+            if (inicioPartida == null)
+            {
+                inicioPartida = DateTime.Now;
+                siguienteIdCarro = 1;
+                carrosPintadosPartida = 0;
+                juegoTerminado = false;
+                ultimoCarroAtendido = new CarroJuego(0, "Amarillo", "#EAB308") { Pintado = true, ColorPintado = "Amarillo" };
+
+                // Cargar los carros tal como se ilustran en el PDF (Naranja, Rojo, Verde)
+                colaCarrosJuego.InsertaCola(new CarroJuego(siguienteIdCarro++, "Naranja", "#F97316"));
+                colaCarrosJuego.InsertaCola(new CarroJuego(siguienteIdCarro++, "Rojo", "#DC2626"));
+                colaCarrosJuego.InsertaCola(new CarroJuego(siguienteIdCarro++, "Verde", "#16A34A"));
+            }
+        }
+
         private static object EstadoJuego()
         {
+            AsegurarInicializacionDemo();
+
             int tiempoSegundos = inicioPartida.HasValue
                 ? (int)Math.Max(0, (DateTime.Now - inicioPartida.Value).TotalSeconds)
                 : 0;
@@ -94,6 +114,7 @@ namespace Proyectos_Estructuras.Controllers
                 estaVacia = colaCarrosJuego.ColaVacia(),
                 frente = colaCarrosJuego.VerFrente(),
                 final = colaCarrosJuego.VerFinal(),
+                ultimoAtendido = ultimoCarroAtendido,
                 carrosPintados = carrosPintadosPartida,
                 juegoTerminado,
                 tiempoTotalSegundos = tiempoSegundos,
@@ -116,7 +137,7 @@ namespace Proyectos_Estructuras.Controllers
 
         // POST /api/colas/juego/iniciar  → comienza una nueva partida
         [HttpPost("juego/iniciar")]
-        public IActionResult IniciarJuego()
+        public IActionResult IniciarJuego([FromQuery] bool reiniciar = true)
         {
             lock (candadoJuego)
             {
@@ -129,14 +150,17 @@ namespace Proyectos_Estructuras.Controllers
                 inicioPartida = DateTime.Now;
                 juegoTerminado = false;
 
-                // Insertar el primer carro en la cola
-                var colorInicial = COLORES_PALETA[Random.Shared.Next(COLORES_PALETA.Length)];
-                CarroJuego primerCarro = new CarroJuego(siguienteIdCarro++, colorInicial.Nombre, colorInicial.Hex);
-                colaCarrosJuego.InsertaCola(primerCarro);
+                // Carro Atendido de muestra (Amarillo como en el diagrama del PDF)
+                ultimoCarroAtendido = new CarroJuego(0, "Amarillo", "#EAB308") { Pintado = true, ColorPintado = "Amarillo" };
+
+                // Insertar los 3 carros del ejemplo del PDF (Naranja, Rojo, Verde)
+                colaCarrosJuego.InsertaCola(new CarroJuego(siguienteIdCarro++, "Naranja", "#F97316"));
+                colaCarrosJuego.InsertaCola(new CarroJuego(siguienteIdCarro++, "Rojo", "#DC2626"));
+                colaCarrosJuego.InsertaCola(new CarroJuego(siguienteIdCarro++, "Verde", "#16A34A"));
 
                 return Ok(new
                 {
-                    mensaje = "¡Partida iniciada! Pinta el carro del frente con el color correcto.",
+                    mensaje = "¡Partida iniciada! Se cargaron los coches del ejemplo del PDF (Naranja, Rojo, Verde).",
                     estado = EstadoJuego()
                 });
             }
@@ -222,7 +246,15 @@ namespace Proyectos_Estructuras.Controllers
                 CarroJuego atendido = colaCarrosJuego.EliminaCola();
                 atendido.Pintado = true;
                 atendido.ColorPintado = colorElegido;
+                ultimoCarroAtendido = atendido;
                 carrosPintadosPartida++;
+
+                // Si la cola se quedó vacía, encolar el siguiente carro para mantener el flujo
+                if (colaCarrosJuego.ColaVacia())
+                {
+                    var sigColor = COLORES_PALETA[Random.Shared.Next(COLORES_PALETA.Length)];
+                    colaCarrosJuego.InsertaCola(new CarroJuego(siguienteIdCarro++, sigColor.Nombre, sigColor.Hex));
+                }
 
                 string avisoVelocidad = "";
                 if (carrosPintadosPartida % 3 == 0)
