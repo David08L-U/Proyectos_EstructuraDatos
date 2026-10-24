@@ -12,6 +12,7 @@ namespace Proyectos_Estructuras.Controllers
         // "static" para que los datos NO se borren entre cada petición
         private static readonly Cola<Cliente> colaBanco = new Cola<Cliente>(10);
         private static readonly ColaCircularDoble<Auto> estacionamiento = new ColaCircularDoble<Auto>();
+        private static int siguienteTurnoBanco = 1;
 
         // Candado para que dos peticiones no modifiquen la cola al mismo tiempo
         private static readonly object candado = new object();
@@ -28,7 +29,91 @@ namespace Proyectos_Estructuras.Controllers
             });
         }
 
-        // TODO Ejercicio 1: Ventanilla de un banco
+        public class NuevoClienteDto
+        {
+            public string? Nombre { get; set; }
+            public string? Movimiento { get; set; }
+        }
+
+        // GET /api/colas/banco
+        [HttpGet("banco")]
+        public IActionResult ObtenerColaBanco()
+        {
+            lock (candado)
+            {
+                return Ok(new
+                {
+                    clientes = colaBanco.ObtenerTodos(),
+                    total = colaBanco.Contar(),
+                    capacidad = colaBanco.Capacidad,
+                    colaVacia = colaBanco.ColaVacia(),
+                    colaLlena = colaBanco.ColaLlena()
+                });
+            }
+        }
+
+        // POST /api/colas/banco/agregar
+        [HttpPost("banco/agregar")]
+        public IActionResult AgregarCliente([FromBody] NuevoClienteDto datos)
+        {
+            string nombre = datos.Nombre?.Trim() ?? "";
+            string movimiento = datos.Movimiento?.Trim() ?? "";
+
+            if (nombre.Length == 0)
+                return BadRequest(new { mensaje = "Escribe el nombre del cliente." });
+
+            if (nombre.Length > 60)
+                return BadRequest(new { mensaje = "El nombre no puede superar 60 caracteres." });
+
+            if (movimiento.Length == 0)
+                return BadRequest(new { mensaje = "Selecciona un tipo de movimiento." });
+
+            if (movimiento.Length > 60)
+                return BadRequest(new { mensaje = "El tipo de movimiento no puede superar 60 caracteres." });
+
+            lock (candado)
+            {
+                if (colaBanco.ColaLlena())
+                    return Conflict(new { mensaje = $"La cola está llena. El banco tiene un cupo máximo de {colaBanco.Capacidad} clientes." });
+
+                Cliente cliente = new Cliente(siguienteTurnoBanco++, nombre, movimiento);
+                colaBanco.InsertaCola(cliente);
+
+                return Ok(new
+                {
+                    mensaje = $"Cliente agregado a la cola con el turno {cliente.Turno}.",
+                    cliente,
+                    total = colaBanco.Contar(),
+                    capacidad = colaBanco.Capacidad
+                });
+            }
+        }
+
+        // POST /api/colas/banco/atender
+        [HttpPost("banco/atender")]
+        public IActionResult AtenderClienteBanco()
+        {
+            lock (candado)
+            {
+                if (colaBanco.ColaVacia())
+                    return BadRequest(new { mensaje = "No hay clientes en espera. La cola está vacía." });
+
+                DateTime horaAtencion = DateTime.Now;
+                Cliente cliente = colaBanco.EliminaCola();
+                double tiempoEsperaSegundos = Math.Max(0, (horaAtencion - cliente.HoraLlegada).TotalSeconds);
+
+                return Ok(new
+                {
+                    mensaje = $"Turno {cliente.Turno}: {cliente.Nombre} fue atendido.",
+                    cliente,
+                    horaAtencion,
+                    tiempoEsperaSegundos,
+                    total = colaBanco.Contar(),
+                    capacidad = colaBanco.Capacidad
+                });
+            }
+        }
+
         // =====================================================================
         //  EJERCICIO 2: JUEGO PINTAR COCHES (Víctor)
         //  - Cola de atención donde se atienden y pintan coches (máximo 5).
